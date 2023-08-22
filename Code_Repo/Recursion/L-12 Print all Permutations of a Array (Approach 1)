@@ -1,0 +1,26 @@
+void f(int i, int n, vector<int>&arr, vector<int>&dp, vector<vector<int>>&ans, vector<int>&ds){
+        if(i == n){
+            ans.push_back(ds);
+            return;
+        }
+        for(int x=0;x<n;x++){
+            if(dp[x] == 1){
+                continue;
+            }
+            else{
+                dp[x] = 1;
+                ds.push_back(arr[x]);
+                f(i+1,n,arr,dp,ans,ds);
+                ds.pop_back();
+                dp[x] = 0;
+            }
+        }
+    }
+    vector<vector<int>> permute(vector<int>& nums) {
+        int n = nums.size();
+        vector<int>dp(n,0);
+        vector<vector<int>>ans;
+        vector<int>ds;
+        f(0,n,nums,dp,ans,ds);
+        return ans;
+    }

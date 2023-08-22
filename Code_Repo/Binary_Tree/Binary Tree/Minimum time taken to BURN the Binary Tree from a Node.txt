@@ -1,0 +1,75 @@
+/************************************************************
+
+    Following is the Binary Tree node structure
+
+    class BinaryTreeNode 
+    {
+        public : 
+        T data;
+        BinaryTreeNode<T> *left;
+        BinaryTreeNode<T> *right;
+
+        BinaryTreeNode(T data) 
+        {
+            this -> data = data;
+            left = NULL;
+            right = NULL;
+        }
+    };
+
+************************************************************/
+#include <bits/stdc++.h>
+int timeToBurnTree(BinaryTreeNode<int>* root, int start)
+{
+    // Write your code here
+    if(root==NULL)
+        return 0;
+    BinaryTreeNode<int>* target;
+    set<BinaryTreeNode<int>*>visited;
+    map<BinaryTreeNode<int>*,BinaryTreeNode<int>*>mp; //{node,parent}
+    queue<BinaryTreeNode<int>*>q;
+    //creating parent links
+    q.push(root);
+    mp[root] = NULL;
+    while(!q.empty()){
+        BinaryTreeNode<int>* node = q.front();
+        q.pop();
+        if(node->data == start){
+            target = node;
+        }
+        if(node->left!=NULL){
+            mp[node->left] = node;
+            q.push(node->left);
+        }
+        if(node->right!=NULL){
+            mp[node->right] = node;
+            q.push(node->right);
+        }
+    }
+    //start burning
+    q.push(target);
+    int ans = -1;
+    while(!q.empty()){
+        ans += 1;
+        int size = q.size();
+        for(int i=0;i<size;i++){
+            BinaryTreeNode<int>* node = q.front();
+            q.pop();
+            visited.insert(node);
+            //move up
+            if(mp[node]!=NULL && (visited.find(mp[node]) == visited.end())){
+                q.push(mp[node]);
+            }
+            //move left
+            if(node->left!=NULL && (visited.find(node->left) == visited.end())){
+                q.push(node->left);
+            }
+            //move right
+            if (node->right != NULL &&
+                (visited.find(node->right) == visited.end())) {
+              q.push(node->right);
+            }
+        }
+    }
+    return ans;
+}

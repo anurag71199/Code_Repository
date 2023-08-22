@@ -1,0 +1,80 @@
+/*********************************/
+/******** STRIVER APPROACH *******/
+/*********************************/
+Node* merge(Node*a, Node*b){
+    Node *newnode = new Node(0);
+    Node *head = newnode;
+    while(a!=NULL && b!=NULL){
+        if(a->data <= b->data){
+            newnode->bottom = a;
+            a = a->bottom;
+        }
+        else{
+            newnode->bottom = b;
+            b = b->bottom;
+        }
+        newnode = newnode->bottom;
+    }
+    newnode->bottom = a!=NULL?a:b;
+    return head->bottom;
+}
+Node *flatten(Node *root)
+{
+   // base case
+   if(root==NULL || root->next == NULL){
+       return root;
+   }
+   flatten(root->next);
+   root = merge(root,root->next);
+   return root;
+}
+
+
+/**********************************************/
+/********* MY APPROACH *********/
+/**********************************************/
+//Node *flatten(Node *root)
+// {
+//   // Your code here
+//   if(root == NULL | root->next == NULL){
+//       return root;
+//   }
+//   Node *down = root;
+//   Node *right = root->next;
+//   Node *prev = NULL;
+//     while(right!=NULL){
+//         while(down!=NULL){
+//             if(down->data > right->data){
+//                 int temp = down->data;
+//                 down->data = right->data;
+//                 right->data = temp;
+//             }
+//             prev = down;
+//             down = down->bottom;
+//         }
+//         prev->bottom = right;
+//         down = right;
+//         right = right->next;
+//         //sort the current bottom list
+//         Node *temp = down;
+//         while(temp->bottom != NULL){
+//             if(temp->data > temp->bottom->data){
+//                 int t = temp->data;
+//                 temp->data = temp->bottom->data;
+//                 temp->bottom->data = t;
+//             }          
+//             temp = temp->bottom;
+//         }
+//   }
+//   //last bottom line sort
+//   while(down->bottom != NULL){
+//         if(down->data > down->bottom->data){
+//             int temp = down->data;
+//             down->data = down->bottom->data;
+//             down->bottom->data = temp;
+//         }       
+//         down = down->bottom;
+//   }
+//   return root;
+   
+// }

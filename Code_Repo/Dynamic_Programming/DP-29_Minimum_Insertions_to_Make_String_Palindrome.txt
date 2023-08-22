@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int minInsertions(string s) {
+        //find the longest palindromic subsequence
+        // and then subtract it from the number of letters
+        string rev = s;
+        reverse(rev.begin(),rev.end());
+        if(s == rev)
+            return 0;
+        vector<vector<int>>dp(s.size()+1,vector<int>(rev.size()+1,0));
+        for(int i=1;i<=s.size();i++){
+            for(int j=1;j<=rev.size();j++){
+                if(s[i-1] == rev[j-1])
+                    dp[i][j] = 1 + dp[i-1][j-1];
+                else
+                    dp[i][j] = max(dp[i-1][j],dp[i][j-1]);
+            }
+        }
+        int lps = dp[s.size()][rev.size()];
+        return s.size() - lps;
+    }
+};

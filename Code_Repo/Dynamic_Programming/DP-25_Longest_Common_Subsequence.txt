@@ -1,0 +1,57 @@
+class Solution {
+public:
+    int memoize(int i1, int i2, string &a, string &b,vector<vector<int>>&dp){
+        if(i1<0 || i2<0)
+            return 0;
+        if(dp[i1][i2] != -1)
+            return dp[i1][i2];
+        //string match
+        if(a[i1] == b[i2])
+            return dp[i1][i2] = 1 + memoize(i1-1, i2-1,a,b,dp);
+        //string mismatch
+        else
+            return dp[i1][i2] = max(memoize(i1-1,i2,a,b,dp),memoize(i1,i2-1,a,b,dp));
+    }
+
+    int tabulate(string &a, string &b){
+        vector<vector<int>>dp(a.size()+1,vector<int>(b.size()+1,0));
+        for(int i=1;i<=a.size();i++){
+                for(int j=1;j<=b.size();j++){
+                    if(a[i-1] == b[j-1]){
+                        dp[i][j] = 1 + dp[i-1][j-1];
+                    }
+                    else
+                        dp[i][j] = max(dp[i-1][j],dp[i][j-1]);
+                }
+        }
+        return dp[a.size()][b.size()];
+    }
+
+    int so(string &a, string &b){
+        vector<int>dp(b.size()+1,0);
+        for(int i=1;i<=a.size();i++){
+                vector<int>temp(b.size()+1,0);
+                for(int j=1;j<=b.size();j++){
+                    if(a[i-1] == b[j-1]){
+                        temp[j] = 1 + dp[j-1];
+                    }
+                    else
+                        temp[j] = max(dp[j],temp[j-1]);
+                }
+                dp = temp;
+        }
+        return dp[b.size()];
+    }
+
+    int longestCommonSubsequence(string text1, string text2) {
+        //memoization
+        // vector<vector<int>>dp(text1.size()+1,vector<int>(text2.size()+1,-1));
+        // return memoize(text1.size()-1, text2.size()-1,text1,text2,dp);
+
+        //tabulate
+        // return tabulate(text1,text2);
+
+        //space optimization
+        return so(text1,text2);
+    }
+};

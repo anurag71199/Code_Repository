@@ -1,0 +1,53 @@
+class Solution {
+public:
+    int memoize(int i, int n, int buy, int cap, vector<int>&prices, vector<vector<vector<int>>>&dp){
+        if(cap == 0)
+            return 0;
+        if(i == n)
+            return 0;
+        if(dp[i][buy][cap] != -1)
+            return dp[i][buy][cap];
+        int take,not_take;
+        if(buy == 1){
+            take = memoize(i+1,n,0,cap,prices,dp) - prices[i];
+            not_take = memoize(i+1,n,1,cap,prices,dp);
+        }
+        else{
+            take = memoize(i+1,n,1,cap-1,prices,dp) + prices[i];
+            not_take = memoize(i+1,n,0,cap,prices,dp);
+        }
+        return dp[i][buy][cap] = max(take,not_take);
+    }
+
+    int tabulate(vector<int>&prices, int k){
+        int n = prices.size();
+        vector<vector<vector<int>>>dp(n+1,vector<vector<int>>(2,vector<int>(k+1,0)));
+        for(int i=n-1;i>=0;i--){
+            for(int buy=0;buy<2;buy++){
+                for(int cap = k; cap>0; cap--){
+                    int take,not_take;
+                    if(buy == 1){
+                        take = dp[i+1][0][cap] - prices[i];
+                        not_take = dp[i+1][1][cap];
+                    }
+                    else{
+                        take = dp[i+1][1][cap-1] + prices[i];
+                        not_take = dp[i+1][0][cap];
+                    }
+                    dp[i][buy][cap] = max(take,not_take);
+                }
+            }
+        }
+        return dp[0][1][k];
+    }
+    int maxProfit(int k, vector<int>& prices) {
+        int n = prices.size();
+
+        //memoize
+        // vector<vector<vector<int>>>dp(n,vector<vector<int>>(2,vector<int>(k+1,-1)));
+        // return memoize(0,n,1,k,prices,dp);
+
+        //tabulate
+        return tabulate(prices,k);
+    }
+};

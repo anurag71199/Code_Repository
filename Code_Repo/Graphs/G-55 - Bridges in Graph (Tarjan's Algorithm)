@@ -1,0 +1,40 @@
+class Solution {
+public:
+    int timer = 0;
+    void dfs(vector<int>adj[], int node, vector<int>&visited, int parent, vector<vector<int>>&edges, vector<int>&tim, vector<int>&low){
+        visited[node] = 1;
+        tim[node] = timer;
+        low[node] = timer;
+        timer++;
+        for(auto i : adj[node]){
+            if(i == parent){
+                continue;
+            }
+            if(!visited[i]){
+                dfs(adj,i,visited,node,edges,tim,low);
+                low[node] = min(low[node], low[i]);
+                if(low[i] > tim[node]){
+                    edges.push_back({node,i});
+                }
+            }
+            else{
+                low[node] = min(low[node], low[i]);
+            }
+        }
+    }
+    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
+        vector<int>adj[n];
+        for(auto i : connections){
+            int u = i[0];
+            int v = i[1];
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        vector<int>visited(n,0);
+        vector<int>tim(n,0);
+        vector<int>low(n,0);
+        vector<vector<int>>edges;
+        dfs(adj,0,visited,-1,edges,tim,low);
+        return edges;
+    }
+};

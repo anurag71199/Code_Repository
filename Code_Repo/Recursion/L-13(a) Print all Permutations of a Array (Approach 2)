@@ -1,0 +1,17 @@
+void f(int i, int n, vector<int>&arr, vector<vector<int>>&ans){
+        if(i==n){
+            ans.push_back(arr);
+            return;
+        }
+        for(int x=i;x<n;x++){
+            swap(arr[x],arr[i]);
+            f(i+1,n,arr,ans);
+            swap(arr[x],arr[i]);
+        }
+    }
+    vector<vector<int>> permute(vector<int>& nums) {
+        vector<vector<int>>ans;
+        int n = nums.size();
+        f(0,n,nums,ans);
+        return ans;
+    }

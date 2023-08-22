@@ -1,0 +1,29 @@
+class Solution{
+	public:
+	int LongestBitonicSequence(vector<int>nums)
+	{
+	    int n = nums.size();
+	    vector<int>LIS(n,1);
+	    vector<int>LDS(n,1);
+	    //LIS
+	    for(int i=0;i<n;i++){
+	        for(int j=0;j<i;j++){
+	            if(nums[j] < nums[i] && LIS[i] < (LIS[j] + 1))
+	                LIS[i] = LIS[j] + 1;
+	        }
+	    }
+	    //LDS
+	    for(int i=n-1;i>=0;i--){
+	        for(int j=n-1;j>i;j--){
+	            if(nums[j] < nums[i] && LDS[i] < (LDS[j] + 1))
+	                LDS[i] = LDS[j] + 1;
+	        }
+	    }
+	    int ans = 0;
+	    for(int i=0;i<n;i++){
+	        int temp = LIS[i] + LDS[i] -1;
+	        ans = max(ans,temp);
+	    }
+	    return ans;
+	}
+};

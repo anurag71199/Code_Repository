@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+
+int memoize(int i, int n, int w, vector<int>&weight, vector<int>&value, vector<vector<int>>&dp){
+	if(i==n){
+		return 0;
+	}
+	if(dp[i][w] != -1)
+		return dp[i][w];
+	int not_take = memoize(i+1,n,w,weight,value,dp);
+	int take = INT_MIN;
+	if(weight[i] <= w){
+		take = memoize(i+1,n,w-weight[i],weight,value,dp) + value[i];
+	}
+	return dp[i][w] = max(take,not_take);
+}
+
+int tabulate(int n, int w, vector<int>&weight, vector<int>&value){
+	vector<vector<int>>dp(n,vector<int>(w+1,0));
+	for(int i=weight[0];i<=w;i++)
+		dp[0][i] = value[0];
+	for(int i=1;i<n;i++){
+		for(int j=0 ; j<=w ; j++){
+			int not_take = dp[i-1][j];
+			int take = INT_MIN;
+			if(weight[i] <= j)
+				take = dp[i-1][j-weight[i]] + value[i];
+			dp[i][j] = max(take,not_take);
+		}
+	}
+	return dp[n-1][w];
+}
+
+int so(int n, int w, vector<int>&weight, vector<int>&value){
+	vector<int>dp(w+1,0);
+	for(int i=weight[0];i<=w;i++)
+		dp[i] = value[0];
+	for(int i=1;i<n;i++){
+		vector<int>temp(w+1,0);
+		for(int j=0 ; j<=w ; j++){
+			int not_take = dp[j];
+			int take = INT_MIN;
+			if(weight[i] <= j)
+				take = dp[j-weight[i]] + value[i];
+			temp[j] = max(take,not_take);
+		}
+		dp = temp;
+	}
+	return dp[w];
+}
+
+int so_single_vector(int n, int w, vector<int>&weight, vector<int>&value){
+	vector<int>dp(w+1,0);
+	for(int i=weight[0];i<=w;i++)
+		dp[i] = value[0];
+
+	for(int i=1;i<n;i++){
+		for(int j=w ; j>=0 ; j--){
+			int not_take = dp[j];
+			int take = INT_MIN;
+			if(weight[i] <= j)
+				take = dp[j-weight[i]] + value[i];
+			dp[j] = max(take,not_take);
+		}
+	}
+	return dp[w];
+}
+
+int knapsack(vector<int> weight, vector<int> value, int n, int maxWeight) 
+{
+	//memoize
+	// vector<vector<int>>dp(n,vector<int>(maxWeight+1,-1));
+	// return memoize(0,n,maxWeight,weight,value,dp);
+
+	//tabulate
+	// return tabulate(n,maxWeight,weight,value);
+
+	//space optimization
+	// return so(n,maxWeight,weight,value);
+
+	//space optimized to single array
+	return so_single_vector(n,maxWeight,weight,value);
+}

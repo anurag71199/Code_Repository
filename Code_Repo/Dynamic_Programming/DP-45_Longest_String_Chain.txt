@@ -1,0 +1,43 @@
+class Solution {
+public:
+    bool check(string &a, string &b){
+        //a is greater than b
+         int alen = a.size(), blen = b.size();
+        if(alen - blen != 1)
+            return false;
+        int i=0,j=0;
+        while(i<alen && j<blen){
+            if(a[i] == b[j]){
+                i++;
+                j++;
+            }
+            else
+                i++;
+        }
+        if(i == alen && j == blen)
+            return true;
+        if(i == alen-1 && j == blen)
+            return true;
+        return false;
+    }
+    static bool cmp(string &a, string &b){
+        return a.size() < b.size();
+    }
+    int longestStrChain(vector<string>& words) {
+        sort(words.begin(),words.end(),cmp);
+        int n = words.size();
+        vector<int>dp(n,1);
+        int maxi = 1;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<i;j++){
+                if(check(words[i],words[j])==true && dp[i]<(dp[j]+1)){
+                    dp[i] = dp[j]+1;
+                }
+            }
+            if(maxi < dp[i]){
+                maxi = dp[i];
+            }
+        }
+        return maxi;
+    }
+};

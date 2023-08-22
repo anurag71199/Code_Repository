@@ -1,0 +1,48 @@
+class Solution {
+  vector<int>parent,size;
+	public:
+	Solution(){
+	    parent.resize(1000);
+	    size.resize(1000,1);
+	    for(int i=0;i<1000;i++){
+	        parent[i] = i;
+	    }
+	}
+	int find(int node){
+	    if(node == parent[node]){
+	        return node;
+	    }
+	    return parent[node] = find(parent[node]);
+	}
+	void union_size(int u, int v){
+	    int pu = find(u);
+	    int pv = find(v);
+	    if(pu == pv){
+	        return; 
+	    }
+	    if(size[pu] < size[pv]){
+	        parent[pu] = pv;
+	        size[pv] += size[pu];
+	    }
+	    else{
+	        parent[pv] = pu;
+	        size[pu] += size[pv];
+	    }
+	}
+    int numProvinces(vector<vector<int>> adj, int V) {
+        for(int i=0;i<V;i++){
+            for(int j=0;j<V;j++){
+                if(adj[i][j] == 1){
+                    union_size(i,j);
+                }
+            }
+        }
+        int count = 0;
+        for(int i=0;i<V;i++){
+            if(find(i) == i){
+                count++;
+            }
+        }
+        return count;
+    }
+};

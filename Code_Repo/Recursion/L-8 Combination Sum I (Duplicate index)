@@ -1,0 +1,23 @@
+void f(int i, int n, int sum, int target, vector<int>&arr, vector<int>&ds, vector<vector<int>>&ans){
+        if(i==n){
+            if(sum == target){
+                ans.push_back(ds);
+            }
+            return;
+        }
+
+        ds.push_back(arr[i]);
+        if(sum + arr[i] <= target){
+            f(i,n,sum+arr[i],target,arr,ds,ans); //take
+        }
+        ds.pop_back();
+        f(i+1,n,sum,target,arr,ds,ans);
+
+    }
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<int>ds;
+        vector<vector<int>>ans;
+        int n = candidates.size();
+        f(0,n,0,target,candidates,ds,ans);
+        return ans;
+    }

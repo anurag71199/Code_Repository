@@ -1,0 +1,59 @@
+bool safe(int row, int col, vector<string>&board, int n){
+        //checking top-left
+        int tempr = row-1;
+        int tempc = col-1;
+        while(tempr>=0 && tempc>=0){
+            if(board[tempr][tempc] == 'Q'){
+                return false;
+            }
+            tempr--;
+            tempc--;
+        } 
+        //checking left
+        tempr = row;
+        tempc = col-1;
+        while(tempc>=0){
+            if(board[tempr][tempc] == 'Q'){
+                return false;
+            }
+            tempc--;
+        }
+        //checking bottom-left
+        tempr = row+1;
+        tempc = col-1;
+        while(tempr<n && tempc>=0){
+            if(board[tempr][tempc] == 'Q'){
+                return false;
+            }
+            tempr++;
+            tempc--;
+        }
+        return true;
+    }
+    void nqueen(int col, int n, vector<string>&board, vector<vector<string>>&ans){
+        if(col == n){
+            ans.push_back(board);
+            return;
+        }
+
+        for(int row=0;row<n;row++){ //in col, iterate over all rows and place queens
+            if(safe(row,col,board,n)){
+                board[row][col] = 'Q';
+                nqueen(col+1,n,board,ans);
+                board[row][col] = '.';
+            }
+        }
+    }
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<string>>ans;
+        vector<string>chess(n);
+        string s(n,'.');
+
+        //making the chess board
+        for(int i=0;i<n;i++){
+            chess[i] = s;
+        }
+
+        nqueen(0,n,chess,ans);
+        return ans;
+    }

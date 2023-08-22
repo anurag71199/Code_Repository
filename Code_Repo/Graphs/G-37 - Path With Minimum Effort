@@ -1,0 +1,30 @@
+int MinimumEffort(vector<vector<int>>& heights) {
+        int n = heights.size();
+        int m = heights[0].size();
+        vector<vector<int>>res(n,vector<int>(m,1e7));
+        res[0][0] = 0;
+        priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>>q;
+        q.push({0,{0,0}});
+        int drow[] = {0,+1,0,-1}; //right, down, left, up
+        int dcol[] = {+1,0,-1,0};
+        while(!q.empty()){
+            int d = q.top().first;
+            int i = q.top().second.first;
+            int j = q.top().second.second;
+            q.pop();
+            for(int x=0;x<4;x++){
+                int newr = i+drow[x];
+                int newc = j+dcol[x];
+                if(newr<0 || newc<0 || newr==n || newc==m){
+                    continue;
+                }
+                int diff = abs(heights[newr][newc] - heights[i][j]);
+                int effort = max(d,diff);
+                if(res[newr][newc] > effort){
+                    res[newr][newc] = effort;
+                    q.push({effort,{newr,newc}});
+                }
+            }
+        }
+        return res[n-1][m-1];
+    }

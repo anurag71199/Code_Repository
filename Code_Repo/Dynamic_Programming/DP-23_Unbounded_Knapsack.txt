@@ -1,0 +1,80 @@
+//{ Driver Code Starts
+// Initial Template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+// } Driver Code Ends
+// User function Template for C++
+
+class Solution{
+public:
+    int memoize(int i, int n, int cap, int val[], int wt[], vector<vector<int>>&dp){
+        if(i==n)
+            return 0;
+        if(dp[i][cap] != -1)
+            return dp[i][cap];
+    
+        //take
+        int take = 0;
+        if((cap - wt[i]) >=0)
+            take = val[i] + memoize(i,n,cap-wt[i], val, wt, dp);        
+        
+        int not_take = memoize(i+1,n,cap,val,wt,dp);
+        return dp[i][cap] = max(take,not_take);
+    }
+    
+    int tabulate(int N, int val[], int wt[], int cap){
+        vector<vector<int>>dp(N,vector<int>(cap+1,0));
+        for(int i=0;i<=cap;i++){
+            if(i>=wt[0])
+                dp[0][i] = (i/wt[0]) * val[0];
+        }
+        for(int i=1;i<N;i++){
+            for(int j=0;j<=cap;j++){
+                //not take
+                int not_take = dp[i-1][j];
+                //take
+                int take = 0;
+                if(wt[i] <= j){
+                    take = val[i] + dp[i][j - wt[i]];
+                }
+                dp[i][j] = max(take,not_take);
+            }
+        }
+        return dp[N-1][cap];
+    }
+    
+    int knapSack(int N, int W, int val[], int wt[])
+    {
+        // code here
+        //memoization
+        //vector<vector<int>>dp(N,vector<int>(W+1, -1));
+        //return memoize(0,N,W,val,wt,dp);
+        
+        //tabulation
+        return tabulate(N,val,wt,W);
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main(){
+    int t;
+    cin>>t;
+    while(t--){
+        int N, W;
+        cin>>N>>W;
+        int val[N], wt[N];
+        for(int i = 0;i < N;i++)
+            cin>>val[i];
+        for(int i = 0;i < N;i++)
+            cin>>wt[i];
+        
+        Solution ob;
+        cout<<ob.knapSack(N, W, val, wt)<<endl;
+    }
+    return 0;
+}
+// } Driver Code Ends

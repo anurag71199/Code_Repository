@@ -1,0 +1,78 @@
+class Solution {
+public:
+    int memoize(int i, int j, string &a, string &b, vector<vector<int>>&dp){
+        if(i<0)
+            return j+1;
+        if(j<0)
+            return i+1;
+        if(dp[i][j] != -1)
+            return dp[i][j];
+        //match
+        if(a[i] == b[j]){
+            return dp[i][j] = memoize(i-1,j-1,a,b,dp);
+        }
+        else{
+            //insert, delete, replace
+            int insert_ = 1 + memoize(i,j-1,a,b,dp);
+            int delete_ = 1 + memoize(i-1,j,a,b,dp);
+            int replace_ = 1 + memoize(i-1,j-1,a,b,dp);
+            return dp[i][j] = min(insert_, min(delete_, replace_));
+        }
+    }
+
+    int tabulate(string &a, string &b){
+        vector<vector<int>>dp(a.size()+1, vector<int>(b.size()+1,0));
+        for(int i=0;i<=b.size();i++)
+            dp[0][i] = i;
+        for(int i=0;i<=a.size();i++)
+            dp[i][0] = i;
+        for(int i=1;i<=a.size();i++){
+            for(int j=1;j<=b.size();j++){
+                if(a[i-1] == b[j-1]){
+                    dp[i][j] = dp[i-1][j-1];
+                }
+                else{
+                    int insert_ = 1 + dp[i][j-1];
+                    int delete_ = 1 + dp[i-1][j];
+                    int replace_ = 1 + dp[i-1][j-1];
+                    dp[i][j] = min(insert_, min(delete_, replace_));
+                }
+            }
+        }
+        return dp[a.size()][b.size()];
+    }
+
+    int so(string &a, string &b){
+        vector<int>dp(b.size()+1,0);
+        for(int i=0;i<=b.size();i++)
+            dp[i] = i;
+        for(int i=1;i<=a.size();i++){
+            vector<int>temp(b.size()+1,0);
+            temp[0] = i;
+            for(int j=1;j<=b.size();j++){
+                if(a[i-1] == b[j-1]){
+                    temp[j] = dp[j-1];
+                }
+                else{
+                    int insert_ = 1 + temp[j-1];
+                    int delete_ = 1 + dp[j];
+                    int replace_ = 1 + dp[j-1];
+                    temp[j] = min(insert_, min(delete_, replace_));
+                }
+            }
+            dp = temp;
+        }
+        return dp[b.size()];
+    }
+    int minDistance(string word1, string word2) {
+        //memoize
+        // vector<vector<int>>dp(word1.size(), vector<int>(word2.size(),-1));
+        // return memoize(word1.size()-1, word2.size()-1, word1, word2, dp);
+
+        //tabulate
+        // return tabulate(word1,word2);
+
+        //space optimization
+        return so(word1,word2);
+    }
+};

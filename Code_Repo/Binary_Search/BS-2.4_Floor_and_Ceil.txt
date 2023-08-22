@@ -1,0 +1,30 @@
+pair<int, int> getFloorAndCeil(int arr[], int n, int x) {
+	vector<int>newarr(arr,arr+n);
+    sort(newarr.begin(),newarr.end());
+    int low=0,high=n-1;
+    int floor = -1, ceil=-1;
+    //floor
+    while(low<=high){
+        int mid = low - (low-high)/2;
+        if(newarr[mid] <= x){
+            floor = newarr[mid];
+            low = mid+1;
+        }
+        else{
+            high = mid-1;
+        }
+    }
+    low = 0;
+    high = n-1;
+    while(low<=high){
+        int mid = low - (low-high)/2;
+        if(newarr[mid] >= x){
+            ceil = newarr[mid];
+            high = mid-1;
+        }
+        else{
+            low = mid+1;
+        }
+    }
+    return {floor,ceil};
+}

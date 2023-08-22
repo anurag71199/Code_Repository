@@ -1,0 +1,80 @@
+void dfs(int n, int m, vector<vector<int>> &grid, vector<vector<int>> &ans, vector<vector<int>> &visited, int i, int j){
+        if(i<0 || j<0 || i==n || j==m || grid[i][j] == 0 || visited[i][j] == 1){
+            return;
+        }
+        ans[i][j] = 1;
+        visited[i][j] = 1;
+        int drow[] = {-1,0,+1,0};
+        int dcol[] = {0,+1,0,-1};
+        for(int x=0;x<4;x++){
+            dfs(n,m,grid,ans,visited,i+drow[x],j+dcol[x]);
+        }
+    }
+    void bfs(int n, int m, vector<vector<int>> &grid, vector<vector<int>> &ans, vector<vector<int>> &visited, int i, int j){
+        queue<pair<int,int>>q;
+        q.push({i,j});
+        int drow[] = {-1,0,+1,0};
+        int dcol[] = {0,+1,0,-1};
+        visited[i][j] = 1;
+        ans[i][j] = 1;
+        while(!q.empty()){
+            int it = q.front().first;
+            int jt = q.front().second;
+            q.pop();
+            for(int x=0;x<4;x++){
+                int itx = it + drow[x];
+                int jtx = jt + dcol[x];
+                if(itx<0 || jtx<0 || itx==n || jtx==m || grid[itx][jtx] == 0 || visited[itx][jtx] == 1){
+                    continue;
+                }
+                else{
+                    visited[itx][jtx] = 1;
+                    ans[itx][jtx] = 1;
+                    q.push({itx,jtx});
+                }
+            }
+            
+        }
+    }
+    int numberOfEnclaves(vector<vector<int>> &grid) {
+        // Code here
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<vector<int>>ans(n,vector<int>(m,2));
+        vector<vector<int>>visited(n,vector<int>(m,0));
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j] == 0){
+                    ans[i][j] = 0;
+                    visited[i][j] = 1;
+                }
+            }
+        }
+        //first and last row
+        for(int j=0;j<m;j++){
+            if(grid[0][j] == 1 && visited[0][j] == 0){
+                bfs(n,m,grid,ans,visited,0,j);
+            }
+            if(grid[n-1][j] == 1 && visited[n-1][j] == 0){
+                bfs(n,m,grid,ans,visited,n-1,j);
+            }
+        }
+        //first and last col
+        for(int i=0;i<n;i++){
+            if(grid[i][0] == 1 && visited[i][0] == 0){
+                bfs(n,m,grid,ans,visited,i,0);
+            }
+            if(grid[i][m-1] == 1 && visited[i][m-1] == 0){
+                bfs(n,m,grid,ans,visited,i,m-1);
+            }
+        }
+        int count = 0;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(ans[i][j] == 2){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }

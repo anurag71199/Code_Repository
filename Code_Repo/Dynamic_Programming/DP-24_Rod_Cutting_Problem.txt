@@ -1,0 +1,77 @@
+class Solution{
+  public:
+    int memoize(int i, int N, int price[], vector<vector<int>>&dp){
+        if(i==0){
+            return N*price[i];
+        }
+        if(dp[i][N] != -1)
+            return dp[i][N];
+        //not_take
+        int not_take = memoize(i-1,N,price,dp);
+        //take
+        int take = 0;
+        int rod_len = i+1;
+        if(N - rod_len >=0){
+            take = price[i] + memoize(i,N-rod_len,price,dp);
+        }
+        return dp[i][N] = max(take,not_take);
+    }
+    
+    int tabulate(int N, int price[]){
+        vector<vector<int>>dp(N,vector<int>(N+1,0));
+        //base case
+        for(int i=0;i<N+1;i++){
+            dp[0][i] = price[0]*i;
+        }
+        for(int i=1;i<N;i++){
+            for(int j=0;j<=N;j++){
+                //not take
+                int not_take = dp[i-1][j];
+                //take
+                int take = 0;
+                int rod_len = i+1;
+                if(j - rod_len >= 0){
+                    take = dp[i][j-rod_len] + price[i];
+                }
+                dp[i][j] = max(take,not_take);
+            }
+        }
+        return dp[N-1][N];
+    }
+    
+    int so(int N, int price[]){
+        vector<int>dp(N+1,0);
+        //base case
+        for(int i=0;i<=N;i++){
+            dp[i] = price[0]*i;
+        }
+        for(int i=1;i<N;i++){
+            vector<int>temp(N+1,0);
+            for(int j=0;j<=N;j++){
+                //not take
+                int not_take = dp[j];
+                //take
+                int take = 0;
+                int rod_len = i+1;
+                if(j - rod_len >= 0){
+                    take = temp[j-rod_len] + price[i];
+                }
+                temp[j] = max(take,not_take);
+            }
+            dp = temp;
+        }
+        return dp[N];
+    }
+    
+    int cutRod(int price[], int n) {
+        //memoization
+        // vector<vector<int>>dp(n,vector<int>(n+1,-1));
+        // return memoize(n-1,n,price,dp);
+        
+        //tabulation
+        // return tabulate(n,price);
+        
+        //space optimization
+        return so(n,price);
+    }
+};

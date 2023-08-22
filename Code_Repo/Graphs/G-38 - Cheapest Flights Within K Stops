@@ -1,0 +1,34 @@
+int CheapestFLight(int n, vector<vector<int>>& flights, int src, int dst, int K)  {
+        vector<pair<int,int>>adj[n];
+        for(int i=0;i<flights.size();i++){
+            int u = flights[i][0];
+            int v = flights[i][1];
+            int dist = flights[i][2];
+            adj[u].push_back({dist,v});
+        }
+        vector<int>dist(n,1e5);
+        queue<pair<int,pair<int,int>>>q; //{step,{node,dist}}
+        q.push({0,{src,0}});
+        dist[src] = 0;
+        while(!q.empty()){
+            int step = q.front().first;
+            int node = q.front().second.first;
+            int d = q.front().second.second;
+            q.pop();
+            if(step > K){
+                continue;
+            }
+            for(auto i : adj[node]){
+                if(dist[i.second] > d + i.first){
+                    dist[i.second] = d + i.first;
+                    q.push({step+1,{i.second,d+i.first}});
+                }
+            }
+        }
+        if(dist[dst] != 1e5){
+            return dist[dst];
+        }
+        else{
+            return -1;
+        }
+    }

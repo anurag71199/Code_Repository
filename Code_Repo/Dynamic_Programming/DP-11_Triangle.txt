@@ -1,0 +1,55 @@
+class Solution {
+public:
+    int memoize(int i, int j, int n, vector<vector<int>>&grid, vector<vector<int>>&dp){
+        if(i==n-1){
+            return grid[i][j];
+        }
+        if(dp[i][j] != -1)
+            return dp[i][j];
+        int down = memoize(i+1,j,n,grid,dp);
+        int down_right = memoize(i+1,j+1,n,grid,dp);
+        return dp[i][j] = min(down,down_right) + grid[i][j];
+        
+    }
+    int tabulation(int n,vector<vector<int>>&grid){
+        vector<vector<int>>dp(n,vector<int>(grid[n-1].size(),0));
+        dp[n-1] = grid[n-1];
+        for(int i=n-2;i>=0;i--){
+            for(int j=i;j>=0;j--){
+                dp[i][j] = grid[i][j] + min(dp[i+1][j],dp[i+1][j+1]);
+            }
+        }
+        return dp[0][0];
+    }
+    int so(int n,vector<vector<int>>&grid){
+        vector<int>dp;
+        dp = grid[n-1];
+        for(int i=n-2;i>=0;i--){
+            vector<int>temp(i+1,0);
+            for(int j=i;j>=0;j--){
+                temp[j] = grid[i][j] + min(dp[j],dp[j+1]);
+            }
+            dp = temp;
+        }
+        return dp[0];
+    }
+    int change_grid(int n, vector<vector<int>>&grid){
+        for(int i=n-2;i>=0;i--){
+            for(int j=i;j>=0;j--){
+                grid[i][j] = grid[i][j] + min(grid[i+1][j],grid[i+1][j+1]);
+            }
+        }
+        return grid[0][0];
+    }
+    int minimumTotal(vector<vector<int>>& triangle) {
+        if(triangle.size() == 1){
+            return triangle[0][0];
+        }
+        int n = triangle.size();
+        // vector<vector<int>>dp(n,vector<int>(triangle[n-1].size(),-1));
+        // return memoize(0,0,n,triangle,dp);
+        // return tabulation(n,triangle);
+        // return so(n,triangle);
+        return change_grid(n,triangle);
+    }
+};

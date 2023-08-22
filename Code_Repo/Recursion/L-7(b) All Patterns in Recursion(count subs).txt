@@ -1,0 +1,32 @@
+#include<bits/stdc++.h>
+
+using namespace std;
+
+int targetsum(int i, int n, vector<int>&arr, int sum, int target){
+    if(i==n){
+        if(sum == target){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+    int left = targetsum(i+1,n,arr,sum+arr[i],target);
+    int right = targetsum(i+1,n,arr,sum,target);
+    return left + right;
+}
+
+int main(){
+    int n;
+    cin>>n; 
+    int in;
+    vector<int>arr;
+    for(int i=0;i<n;i++){
+        cin>>in;
+        arr.push_back(in);
+    }
+    int target;
+    cin>>target;
+    cout<<targetsum(0,n,arr,0,target);
+    return 0;
+}

@@ -1,0 +1,64 @@
+class Solution {
+  vector<int>parent,size;
+	public:
+	Solution(){
+	    parent.resize(10000);
+	    size.resize(10000,1);
+	    for(int i=0;i<10000;i++){
+	        parent[i] = i;
+	    }
+	}
+	int find(int node){
+	    if(node == parent[node]){
+	        return node;
+	    }
+	    return parent[node] = find(parent[node]);
+	}
+	void union_size(int u, int v){
+	    int pu = find(u);
+	    int pv = find(v);
+	    if(pu == pv){
+	        return; 
+	    }
+	    if(size[pu] < size[pv]){
+	        parent[pu] = pv;
+	        size[pv] += size[pu];
+	    }
+	    else{
+	        parent[pv] = pu;
+	        size[pu] += size[pv];
+	    }
+	}
+    vector<int> numOfIslands(int n, int m, vector<vector<int>> &operators) {
+        vector<vector<int>>visited(n,vector<int>(m,0));
+        int drow[] = {-1,0,+1,0}; //up right down left
+        int dcol[] = {0,+1,0,-1};
+        int size = 0;
+        vector<int>ans;
+        for(int k=0;k<operators.size();k++){
+            int i = operators[k][0];
+            int j = operators[k][1];
+            if(visited[i][j] == 0){
+                size++;
+                visited[i][j] = 1;
+                for(int x=0;x<4;x++){
+                    int it = i+drow[x];
+                    int jt = j+dcol[x];
+                    if(it < 0 || jt < 0 || it == n || jt == m || visited[it][jt] == 0){
+                        continue;
+                    }
+                    else{
+                        int vis_coor = it*m + jt;
+                        int my_coor = i*m + j;
+                        if(find(vis_coor) != find(my_coor)){
+                            size--;
+                            union_size(vis_coor,my_coor);
+                        }
+                    }
+                }
+            }
+            ans.push_back(size);
+        }
+        return ans;
+    }
+};

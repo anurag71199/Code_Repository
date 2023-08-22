@@ -1,0 +1,43 @@
+void dfs(vector<pair<int,int>>adj[], stack<int>&st, int node, vector<int>&visited){
+        visited[node] = 1;
+        for(auto i : adj[node]){
+            if(visited[i.first]==0)
+                dfs(adj,st,i.first,visited);
+        }
+        st.push(node);
+    }
+     vector<int> shortestPath(int N,int M, vector<vector<int>>& edges){
+        vector<pair<int,int>>adj[N];
+        for(int i=0;i<edges.size();i++){
+                int u = edges[i][0];
+                int v = edges[i][1];
+                int dist = edges[i][2];
+                adj[u].push_back({v,dist});
+        }
+        //topo sort using dfs
+        vector<int>visited(N,0);
+        stack<int>st;
+        for(int i = 0;i<N;i++){
+            if(visited[i] == 0){
+                dfs(adj,st,i,visited);
+            }
+        }
+        //dag + topo
+        vector<int>dist(N,1e5); // initialized with infinity
+        dist[0] = 0; //source
+        while(st.size()!=0){
+            int node = st.top();
+            st.pop();
+            for(auto i : adj[node]){
+                if(dist[i.first] > dist[node]+i.second){ //relax
+                    dist[i.first] = dist[node] + i.second;
+                }
+            }
+        }
+        for(int i=0;i<dist.size();i++){
+            if(dist[i] == 1e5){
+                dist[i] = -1;
+            }
+        }
+        return dist;
+    }

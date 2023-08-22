@@ -1,0 +1,29 @@
+bool checkpalin(string &s){
+        for(int i =0;i<s.size()/2;i++){
+            if(s[i] != s[s.size()-i-1]){
+                return false;
+            }
+        }
+        return true;
+    }
+    void palpart(int ind, int n, string &s, vector<string>&ds, vector<vector<string>>&ans){
+        if(ind == n){
+            ans.push_back(ds);
+            return;
+        }
+        for(int i=ind; i<n; i++){
+            string temp = s.substr(ind,i-ind+1);
+            if(checkpalin(temp)){
+                ds.push_back(temp);
+                palpart(i+1, n,s,ds,ans);
+                ds.pop_back();
+            }
+        }
+    }
+    vector<vector<string>> partition(string s) {
+        int n = s.size();
+        vector<string>ds;
+        vector<vector<string>>ans;
+        palpart(0,n,s,ds,ans);
+        return ans;
+    }

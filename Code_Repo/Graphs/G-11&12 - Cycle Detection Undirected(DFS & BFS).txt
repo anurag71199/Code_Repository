@@ -1,0 +1,55 @@
+//true means cycle is present
+    bool dfs(vector<int> adj[], int node, int parent, vector<int>&visited){
+        visited[node] = 1;
+        for(auto i : adj[node]){
+            if(i != parent){
+                if(visited[i] == 1){
+                    return true;
+                }
+                else{
+                    if(dfs(adj,i,node,visited) == true){
+                        return true;
+                    }
+                }
+                    
+            }
+        }
+        return false;
+    }
+    
+    bool bfs(vector<int> adj[], int node, int parent, vector<int>&visited){
+        visited[node] = 1;
+        queue<pair<int,int>>q; //node and parent
+        q.push({node,parent});
+        while(!q.empty()){
+            int n = q.front().first;
+            int p = q.front().second;
+            q.pop();
+            for(auto i : adj[n]){
+                if(i != p){
+                    if(visited[i] == 1){
+                        return true;
+                    }
+                    else{
+                       visited[i] = 1;
+                        q.push({i,n});
+                    }
+                }
+            }
+        }
+        return false;
+        
+    }
+    
+    bool isCycle(int V, vector<int> adj[]) {
+        // Code here
+        vector<int>visited(V+1,0);
+        for(int i=0;i<V;i++){
+            if(visited[i] == 0){
+                if(bfs(adj,i,-1,visited) == true){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }

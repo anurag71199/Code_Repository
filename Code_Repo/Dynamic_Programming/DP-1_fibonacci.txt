@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int fib_mem(int n, vector<int>&dp){
+    if(n<=1)
+        return n;
+    if(dp[n] != -1){
+        return dp[n];
+    }
+    return dp[n] = fib_mem(n-1,dp) + fib_mem(n-2,dp);
+}
+
+int fib_tab(int n){
+    vector<int>dp(n+1,-1);
+    dp[0] = 0;
+    dp[1] = 1;
+    if(n<2)
+        return dp[n];
+    for(int i=2;i<=5;i++){
+        dp[i] = dp[i-1] + dp[i-2];
+    }
+    return dp[n];
+}
+
+int fib_so(int n){
+    int a = 0;
+    int b = 1;
+    if(n==0)
+        return a;
+    if(n==1)
+        return b;
+    int c;
+    for(int i=2;i<=n;i++){
+        c = a + b;
+        a = b;
+        b = c;
+    }
+    return c;
+}
+
+int main()
+{
+    cout<<"Fibonacci\n";
+    int n;
+    cout<<"Enter number : ";
+    cin>>n;
+    vector<int>dp(n+1,-1);  
+    // int ans = fib_mem(n,dp); //memoization
+    // int ans = fib_tab(n); //tabulation
+    int ans = fib_so(n); //space optimization
+
+    cout<<ans;
+    return 0;
+}
+

@@ -1,0 +1,64 @@
+#include <bits/stdc++.h>
+int memoize(int day, int prev_task, int n, vector<vector<int>>&grid,vector<vector<int>>&dp){
+    if(day==n){
+        return 0;
+    }
+    if(dp[day][prev_task]!= -1)
+        return dp[day][prev_task];
+    int ans = INT_MIN;
+    for(int i=0;i<3;i++){
+        if(i!=prev_task){
+            ans = max(ans,memoize(day+1,i,n,grid,dp) + grid[day][i]);
+        }
+    }
+    return dp[day][prev_task] = ans;
+}
+
+int tabulation(int n, vector<vector<int>>&arr){
+    vector<vector<int>>dp(n,vector<int>(4,0));
+    //initialize 0th row of dp
+    dp[0][0] = max(arr[0][1], arr[0][2]);
+    dp[0][1] = max(arr[0][0], arr[0][2]);
+    dp[0][2] = max(arr[0][0], arr[0][1]);
+    dp[0][3] = max(arr[0][0],max(arr[0][1],arr[0][2]));
+    for(int day=1;day<n;day++){
+        for(int prev_task=0;prev_task<4;prev_task++){
+            dp[day][prev_task] = 0;
+            for(int i=0;i<3;i++){ 
+                if(i!=prev_task){
+                    dp[day][prev_task] = max(dp[day][prev_task],dp[day-1][i] + arr[day][i]);
+                    }
+            }
+        }
+    }
+    return dp[n-1][3];
+}
+
+int so(int n, vector<vector<int>>&arr){
+    vector<int>prev(4,0);
+    //initialize 0th row of dp
+    prev[0] = max(arr[0][1], arr[0][2]);
+    prev[1] = max(arr[0][0], arr[0][2]);
+    prev[2] = max(arr[0][0], arr[0][1]);
+    prev[3] = max(arr[0][0],max(arr[0][1],arr[0][2]));
+    for(int day=1;day<n;day++){
+        vector<int>temp(4,0);
+        for(int prev_task=0;prev_task<4;prev_task++){
+            temp[prev_task] = 0;
+            for(int i=0;i<3;i++){ 
+                if(i!=prev_task){
+                    temp[prev_task] = max(temp[prev_task],prev[i] + arr[day][i]);
+                    }
+            }
+        }
+        prev = temp;
+    }
+    return prev[3];
+}
+int ninjaTraining(int n, vector<vector<int>> &points)
+{
+    // vector<vector<int>>dp(n+1,vector<int>(4,-1));
+    // return memoize(0,3,n,points,dp);
+    // return tabulation(n,points);
+    return so(n,points);
+}

@@ -1,0 +1,36 @@
+void shaper(vector<vector<int>>&grid, vector<vector<int>>&visited, int i, int j, int basei, int basej, vector<pair<int,int>>&shape, int n, int m){
+        if(i<0 || j<0 || i==n || j == m || grid[i][j] == 0 || visited[i][j] == 1){
+            return;
+        }
+        int it = i-basei;
+        int jt = j-basej;
+        shape.push_back({it,jt});
+        visited[i][j] = 1;
+        
+        //right
+        shaper(grid,visited,i,j+1,basei,basej,shape,n,m);
+        //down
+        shaper(grid,visited,i+1,j,basei,basej,shape,n,m);
+        //left
+        shaper(grid,visited,i,j-1,basei,basej,shape,n,m);
+        //up
+        shaper(grid,visited,i-1,j,basei,basej,shape,n,m);
+    }
+    int countDistinctIslands(vector<vector<int>>& grid) {
+        // code here
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<vector<int>>visited(n,vector<int>(m,0));
+        vector<pair<int,int>>shape;
+        set<vector<pair<int,int>>>myset;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j] == 1 && visited[i][j] != 1){
+                    shaper(grid,visited,i,j,i,j,shape,n,m);
+                    myset.insert(shape);
+                    shape.clear();
+                }
+            }
+        }
+        return myset.size();
+    }

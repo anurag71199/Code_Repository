@@ -1,0 +1,16 @@
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int max_sum = INT_MIN, curmax = 0;
+        for(auto i : nums){
+            curmax += i;
+            if(max_sum < curmax){
+                max_sum = curmax;
+            }
+            if(curmax < 0){
+                curmax = 0;
+            }
+        }
+        return max_sum;
+    }
+};

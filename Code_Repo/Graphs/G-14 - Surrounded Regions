@@ -1,0 +1,59 @@
+void dfs(int n, int m, vector<vector<char>>&mat, vector<vector<char>>&ans, vector<vector<int>>&visited,int i, int j){
+        if(i<0 || j<0 || i==n || j==m || mat[i][j] == 'X' || visited[i][j] == 1){
+            return;
+        }
+        visited[i][j] = 1;
+        ans[i][j] = 'O';
+        int drow[] = {-1,0,+1,0};
+        int dcol[] = {0,+1,0,-1};
+        for(int x=0;x<4;x++){
+            dfs(n,m,mat,ans,visited,i+drow[x],j+dcol[x]);
+        }
+        return;
+    }
+    vector<vector<char>> fill(int n, int m, vector<vector<char>> mat)
+    {
+        // code here
+        vector<vector<char>>ans(n,vector<char>(m,'-'));
+        vector<vector<int>>visited(n,vector<int>(m,0));
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(mat[i][j] == 'X'){
+                    ans[i][j] = 'X';
+                    visited[i][j] = 1;
+                }
+            }
+        }
+        //first row
+        for(int j=0;j<m;j++){
+            if(mat[0][j] == 'O' && visited[0][j] == 0){
+                dfs(n,m,mat,ans,visited,0,j);
+            }
+        }
+        //last row
+        for(int j=0;j<m;j++){
+            if(mat[n-1][j] == 'O' && visited[n-1][j] == 0){
+                dfs(n,m,mat,ans,visited,n-1,j);
+            }
+        }
+        //first col
+        for(int i=0;i<n;i++){
+            if(mat[i][0] == 'O' && visited[i][0] == 0){
+                dfs(n,m,mat,ans,visited,i,0);
+            }
+        }
+        //last col
+        for(int i=0;i<n;i++){
+            if(mat[i][m-1] == 'O' && visited[i][m-1] == 0){
+                dfs(n,m,mat,ans,visited,i,m-1);
+            }
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(ans[i][j] == '-'){
+                    ans[i][j] = 'X';
+                }
+            }
+        }
+        return ans;
+    }

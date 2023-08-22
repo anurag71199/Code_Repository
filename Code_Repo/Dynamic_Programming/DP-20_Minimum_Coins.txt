@@ -1,0 +1,83 @@
+class Solution {
+public:
+    int memoize(int i, int n, int target, vector<int>&arr,vector<vector<int>>&dp){
+        if(i==n){
+            if(target == 0)
+                return 0;
+            return 1e8;
+        }
+        if(dp[i][target] != -1)
+            return dp[i][target];
+        int not_take = memoize(i+1,n,target,arr,dp);
+        int take = 1e8;
+        if(arr[i] <= target)
+            take = 1 + memoize(i,n,target-arr[i],arr,dp);
+        return dp[i][target] = min(take,not_take);
+    }
+
+    int tabulate(int n, int target, vector<int>&arr){
+        vector<vector<int>>dp(n,vector<int>(target+1,0));
+        for(int i=0;i<=target;i++){
+            if(i%arr[0] == 0){
+                dp[0][i] = i/arr[0];
+            }
+            else{
+                dp[0][i] = 1e8;
+            }
+        }
+        for(int i=1;i<n;i++){
+            for(int j = 0;j<=target;j++){
+                int not_take = dp[i-1][j];
+                int take = 1e8;
+                if(arr[i] <= j){
+                    take = 1 + dp[i][j - arr[i]];
+                }
+                dp[i][j] = min(take,not_take);
+            }
+        }
+        return dp[n-1][target];
+    }
+
+    int so(int n, int target, vector<int>&arr){
+        vector<int>dp(target+1,0);
+        for(int i=0;i<=target;i++){
+            if(i%arr[0] == 0){
+                dp[i] = i/arr[0];
+            }
+            else{
+                dp[i] = 1e8;
+            }
+        }
+        for(int i=1;i<n;i++){
+            vector<int>temp(target+1,0);
+            for(int j = 0;j<=target;j++){
+                int not_take = dp[j];
+                int take = 1e8;
+                if(arr[i] <= j){
+                    take = 1 + temp[j-arr[i]];
+                }
+                temp[j] = min(take,not_take);
+            }
+            dp = temp;
+        }
+        return dp[target];
+    }
+
+    int coinChange(vector<int>& coins, int amount) {
+        if(amount == 0)
+            return 0;
+        int n = coins.size();
+        //memoization
+        // vector<vector<int>>dp(n,vector<int>(amount+1,-1));
+        // int ans = memoize(0,n,amount,coins,dp);
+        
+        //tabulation
+        // int ans = tabulate(n,amount,coins);
+
+        //space optimization
+        int ans = so(n,amount,coins);
+        if(ans == 1e8)
+            return -1;
+        return ans;
+    }
+};

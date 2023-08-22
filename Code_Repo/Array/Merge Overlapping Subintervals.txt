@@ -1,0 +1,33 @@
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        sort(intervals.begin(),intervals.end());
+        stack<pair<int,int>>st;
+        st.push({intervals[0][0],intervals[0][1]});
+        for(int i=1;i<intervals.size();i++){
+            if(intervals[i][0] <= st.top().second){
+                if(intervals[i][1] <= st.top().second){
+                    continue;
+                }
+                pair<int,int>temp = st.top();
+                st.pop();
+                temp.second = intervals[i][1];
+                st.push(temp);
+            }
+            else{
+                st.push({intervals[i][0],intervals[i][1]});
+            }
+        }
+        vector<vector<int>>ans;
+        while(!st.empty()){
+            vector<int>temp;
+            temp.push_back(st.top().first);
+            temp.push_back(st.top().second);
+            st.pop();
+            ans.push_back(temp);
+            temp.clear();
+        }
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }
+};

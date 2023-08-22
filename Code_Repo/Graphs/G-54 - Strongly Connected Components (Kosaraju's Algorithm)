@@ -1,0 +1,49 @@
+void dfs(int node, stack<int>&st, vector<int>&visited, vector<int>adj[]){
+	    visited[node] = 1;
+	    for(auto i : adj[node]){
+	        if(!visited[i]){
+	            dfs(i,st,visited,adj);
+	        }
+	    }
+	    st.push(node);
+	}
+void dfs2(int node, vector<int>&visited, vector<int>adj[]){
+	    visited[node] = 1;
+	    for(auto i : adj[node]){
+	        if(!visited[i]){
+	            dfs2(i,visited,adj);
+	        }
+	    }
+	}
+	//Function to find number of strongly connected components in the graph.
+int kosaraju(int V, vector<int> adj[])
+    {
+        vector<int>visited(V,0);
+        stack<int>st;
+        // sort the edges on finishing time
+        for(int i=0;i<V;i++){
+            if(!visited[i])
+                dfs(i,st,visited,adj);
+        }
+        
+        //reverse the graph
+        vector<int>graph_rev[V];
+        for(int i=0;i<V;i++){
+            for(auto x : adj[i]){
+                graph_rev[x].push_back(i);
+            }
+        }
+        
+        vector<int>visited2(V,0);
+        int scc = 0;
+        //run dfs on elements on stack based on finishing time
+        while(!st.empty()){
+            int node = st.top();
+            st.pop();
+            if(!visited2[node]){
+                dfs2(node,visited2,graph_rev);
+                scc++;
+            }
+        }
+        return scc;
+    }

@@ -1,0 +1,39 @@
+int shortestPath(vector<vector<int>> &grid, pair<int, int> source,
+                     pair<int, int> destination) {
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<vector<int>>res(n,vector<int>(m,1e5));
+        queue<pair<int,int>>q;
+        int srci = source.first;
+        int srcj = source.second;
+        int desti = destination.first;
+        int destj = destination.second;
+        if(srci == desti && srcj == destj){
+            return 0;
+        }
+        res[srci][srcj] = 0;
+        q.push({srci,srcj});
+        int drow[] = {-1,0,+1,0}; //up, right, down, left
+        int dcol[] = {0,+1,0,-1};
+        while(!q.empty()){
+            int i = q.front().first;
+            int j = q.front().second;
+            q.pop();
+            for(int x=0;x<4;x++){
+                int newr = i+drow[x];
+                int newc = j+dcol[x];
+                if(newr == desti && newc == destj){
+                    return res[i][j]+1;
+                }
+                if(newr<0 || newc<0 || newr==n || newc == m || grid[newr][newc] == 0){
+                    continue;
+                }
+                if(res[newr][newc] > (res[i][j] + 1)){
+                    res[newr][newc] = res[i][j]+1;
+                    q.push({newr,newc});
+                }
+            }
+            
+        }
+        return -1;
+    }

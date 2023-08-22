@@ -1,0 +1,49 @@
+void dfs(vector<vector<int>>& image, int i, int j, int col, int newcol,int n, int m){
+        if(i<0 || j<0 || i==n || j==m || image[i][j] != col){
+            return;
+        }
+        image[i][j] = newcol;
+        //up
+        dfs(image,i-1,j,col,newcol,n,m);
+        //right
+        dfs(image,i,j+1,col,newcol,n,m);
+        //down
+        dfs(image,i+1,j,col,newcol,n,m);
+        //left
+        dfs(image,i,j-1,col,newcol,n,m);
+    }
+    void bfs(vector<vector<int>>& image, int i, int j, int col, int newcol,int n, int m){
+        queue<pair<int,int>>q;
+        q.push({i,j});
+        int drow[] = {-1,0,+1,0}; //up,right,down,left
+        int dcol[] = {0,+1,0,-1};
+        image[i][j] = newcol;
+        while(!q.empty()){
+            int it = q.front().first;
+            int jt = q.front().second;
+            q.pop();
+            for(int x=0;x<4;x++){
+                int newr = drow[x] + it;
+                int newc = dcol[x] + jt;
+                if(newr<0 || newc<0 || newr==n || newc==m || image[newr][newc]!=col){
+                    continue;
+                }
+                else{
+                    image[newr][newc] = newcol;
+                    q.push({newr,newc});
+                }
+            }
+        }
+    }
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
+        // Code here
+        if(image[sr][sc] == newColor){
+            return image;
+        }
+        int col = image[sr][sc];
+        int n = image.size();
+        int m = image[0].size();
+        //dfs(image,sr,sc,col,newColor,n,m);
+        bfs(image,sr,sc,col,newColor,n,m);
+        return image;
+    }

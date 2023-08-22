@@ -1,0 +1,44 @@
+#include <bits/stdc++.h> 
+int so(int n, int target, vector<int>&arr){
+	if(target == 0){
+		return 0;
+	}
+	if(arr.size() == 1){
+		return arr[0];
+	}
+	vector<bool>dp(target+1, false);
+	dp[0] = true;
+	if(arr[0] > target){
+		return 0;
+	}
+	dp[arr[0]] = true;
+	for(int i=1;i<n;i++){
+		vector<bool>temp(target+1,false);
+		temp[0] = true;
+		for(int j=1;j<=target;j++){
+			bool not_take = dp[j];
+			bool take = false;
+			if(arr[i] <= j){
+				take = dp[j-arr[i]];
+			}
+			temp[j] = take | not_take;
+		}
+		dp = temp;
+	}
+	int mini = 1e8;
+	for(int i = 1; i <= dp.size()/2; i++){
+		if(dp[i] == true){
+			mini = min(mini, abs(target-(2*i)));
+		}
+	}
+	return mini;
+}
+int minSubsetSumDifference(vector<int>& arr, int n)
+{
+	int sum = 0;
+	for(int i : arr){
+		sum += i;
+	}
+	return so(n,sum,arr);
+}
+

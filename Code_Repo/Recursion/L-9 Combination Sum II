@@ -1,0 +1,27 @@
+    void f(int i, int n, vector<int>&arr, vector<int>&ds, vector<vector<int>>&ans, int sum, int target){
+        
+        
+        if(sum == target){
+            ans.push_back(ds);
+            return;
+        }
+
+        for(int x = i; x<n; x++){
+            
+            if(x>i && arr[x] == arr[x-1])
+                continue;
+            if(arr[x] + sum > target)
+                break;
+            ds.push_back(arr[x]);
+            f(x+1, n, arr, ds, ans, sum+arr[x], target);
+            ds.pop_back();
+        }
+    }
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        sort(candidates.begin(), candidates.end());
+        int n = candidates.size();
+        vector<int>ds;
+        vector<vector<int>>ans;
+        f(0,n,candidates,ds,ans,0,target);
+        return ans;
+    }

@@ -1,0 +1,83 @@
+#include <bits/stdc++.h> 
+int memoize(int i, int n, int target, vector<int>&arr, vector<vector<int>>&dp){
+    if(i==n){
+        if(target == 0)
+            return 1;
+        return 0;
+    }
+    if(dp[i][target] != -1)
+        return dp[i][target];
+    int not_take = memoize(i+1,n,target,arr,dp);
+    int take = 0;
+    if(arr[i] <= target){
+        take = memoize(i+1,n,target-arr[i],arr,dp);
+    }
+    return dp[i][target] = take+not_take;
+}
+
+int tabulate(int n, int target, vector<int>&arr){
+    vector<vector<int>>dp(n,vector<int>(target+1,0));
+    for(int i=0;i<n;i++)
+        dp[i][0] = 1;
+    if(arr[0] <= target)
+        dp[0][arr[0]] = 1;
+    //special test case
+    /*
+    In situation of sum = 0 and considerable index  0's val = 0 
+    sum = 0 we can get in two ways , either 0 added to the set
+    or not added to the set in both ways the sum of set elements will provide zero.
+    Thats why to get sum of set as zero when zeroth index element is also zero  could got two ways
+    */
+    if(arr[0] == 0){
+        dp[0][0] = 2;
+    }
+
+    for(int i=1;i<n;i++){
+        for(int j=0;j<=target;j++){
+            int not_take = dp[i-1][j];
+            int take = 0;
+            if(arr[i] <= j){
+                take = dp[i-1][j-arr[i]];
+            }
+            dp[i][j] = take + not_take;
+        }
+    }
+    return dp[n-1][target];
+}
+
+int so(int n, int target, vector<int>&arr){
+    vector<int>dp(target+1,0);
+    dp[0] = 1;
+    if(arr[0] <= target)
+        dp[arr[0]] = 1;
+    if(arr[0] == 0)
+        dp[0] = 2;
+    for(int i=1;i<n;i++){
+        vector<int>temp(target+1,0);
+        temp[0] = 1;
+        for(int j=0;j<=target;j++){
+            int not_take = dp[j];
+            int take = 0;
+            if(arr[i] <= j){
+                take = dp[j-arr[i]];
+            }
+            temp[j] = take + not_take;
+        }
+        dp = temp;
+    }
+    return dp[target];
+}
+
+int findWays(vector<int> &num, int tar)
+{
+    int n = num.size();
+    //memoize
+    // vector<vector<int>>dp(n,vector<int>(tar+1,-1));
+    // return memoize(0,n,tar,num,dp);
+
+    //tabulate
+    // return tabulate(n,tar,num);
+
+    //space optimization
+    return so(n,tar,num);
+}

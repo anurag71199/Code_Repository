@@ -1,0 +1,56 @@
+class Solution {
+  vector<int>parent,size;
+	public:
+	Solution(){
+	    parent.resize(1000);
+	    size.resize(1000,1);
+	    for(int i=0;i<1000;i++){
+	        parent[i] = i;
+	    }
+	}
+	int find(int node){
+	    if(node == parent[node]){
+	        return node;
+	    }
+	    return parent[node] = find(parent[node]);
+	}
+	void union_size(int u, int v){
+	    int pu = find(u);
+	    int pv = find(v);
+	    if(pu == pv){
+	        return; 
+	    }
+	    if(size[pu] < size[pv]){
+	        parent[pu] = pv;
+	        size[pv] += size[pu];
+	    }
+	    else{
+	        parent[pv] = pu;
+	        size[pu] += size[pv];
+	    }
+	}
+    int Solve(int n, vector<vector<int>>& edge) {
+        int extra_edge = 0;
+        for(int i=0;i<edge.size();i++){
+            int u = edge[i][0];
+            int v = edge[i][1];
+            if(find(u) == find(v)){
+                extra_edge++;
+                continue;
+            }
+            union_size(u,v);
+        }
+        int count = 0;
+        for(int i=0;i<n;i++){
+            if(find(i) == i){
+                count++;
+            }
+        }
+        if(extra_edge >= (count-1)){
+            return count-1;
+        }
+        else{
+            return -1;
+        }
+    }
+};

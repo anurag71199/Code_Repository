@@ -1,0 +1,64 @@
+class Solution{
+  vector<int>parent,size;
+	public:
+	Solution(){
+	    parent.resize(10000);
+	    size.resize(10000,1);
+	    for(int i=0;i<10000;i++){
+	        parent[i] = i;
+	    }
+	}
+	int find(int node){
+	    if(node == parent[node]){
+	        return node;
+	    }
+	    return parent[node] = find(parent[node]);
+	}
+	void union_size(int u, int v){
+	    int pu = find(u);
+	    int pv = find(v);
+	    if(pu == pv){
+	        return; 
+	    }
+	    if(size[pu] < size[pv]){
+	        parent[pu] = pv;
+	        size[pv] += size[pu];
+	    }
+	    else{
+	        parent[pv] = pu;
+	        size[pu] += size[pv];
+	    }
+	}
+    vector<vector<string>> accountsMerge(vector<vector<string>> &accounts) {
+        int n = accounts.size();
+        unordered_map<string,int>mymap;
+        for(int i=0;i<n;i++){
+            for(int j=1;j<accounts[i].size();j++){
+                if(mymap.find(accounts[i][j]) == mymap.end()){
+                    mymap[accounts[i][j]] = i;
+                }
+                else{
+                    union_size(i,mymap[accounts[i][j]]);
+                }
+                
+            }
+        }
+        vector<string>mat[n];
+        for(auto i : mymap){
+            string mail = i.first;
+            int node = find(i.second);
+            mat[node].push_back(mail);
+        }
+        vector<vector<string>>ans;
+        for(int i=0;i<n;i++){
+            if(mat[i].size() != 0){
+                sort(mat[i].begin(),mat[i].end());
+                vector<string>temp;
+                temp.push_back(accounts[i][0]);
+                temp.insert(temp.end(),mat[i].begin(),mat[i].end());
+                ans.push_back(temp);
+            }
+        }
+        return ans;
+    }
+};

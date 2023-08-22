@@ -1,0 +1,88 @@
+class Solution {
+	public:
+	vector<int>parent,size;
+	Solution(){
+	    parent.resize(1000000);
+	    size.resize(1000000,1);
+	    for(int i=0;i<1000000;i++){
+	        parent[i] = i;
+	    }
+	}
+	int find(int node){
+	    if(node == parent[node]){
+	        return node;
+	    }
+	    return parent[node] = find(parent[node]);
+	}
+	void union_size(int u, int v){
+	    int pu = find(u);
+	    int pv = find(v);
+	    if(pu == pv){
+	        return; 
+	    }
+	    if(size[pu] < size[pv]){
+	        parent[pu] = pv;
+	        size[pv] += size[pu];
+	    }
+	    else{
+	        parent[pv] = pu;
+	        size[pu] += size[pv];
+	    }
+	}
+    int MaxConnection(vector<vector<int>>& grid) {
+        //create disjoint sets for the islands in the grid
+        int n = grid.size();
+        int drow[] = {-1,0,+1,0};
+        int dcol[] = {0,+1,0,-1};
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(grid[i][j] == 1){
+                    for(int x=0;x<4;x++){
+                        int it = i+drow[x];
+                        int jt = j+dcol[x];
+                        int mycell = i*n + j;
+                        int newcell = it*n + jt;   
+                        if(it<0 || jt<0 || it==n || jt==n || grid[it][jt] == 0){
+                            continue;
+                        }
+                        else{
+                            union_size(mycell,newcell);
+                        }
+                    }
+                }
+            }
+        }
+        set<int>s; //stores adjacent group parents
+        int ans = INT_MIN;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(grid[i][j] == 0){
+                    int count = 0;
+                    for(int x=0;x<4;x++){
+                        int it = i+drow[x];
+                        int jt = j+dcol[x];
+                        int mycell = i*n + j;
+                        int newcell = it*n + jt;
+                        if(it<0 || jt<0 || it==n || jt==n || grid[it][jt] == 0){
+                            continue;
+                        }
+                        else{
+                            s.insert(find(newcell));
+                        }
+                    }
+                    for(auto x:s){
+                        count += size[x];
+                    }
+                    s.clear();
+                    count++;
+                    ans = max(ans,count);
+                }
+            }
+        }
+        //case for all 1's
+        for(int i=0;i<n*n;i++){
+            ans = max(ans,size[find(i)]);
+        }
+        return ans;
+    }
+};

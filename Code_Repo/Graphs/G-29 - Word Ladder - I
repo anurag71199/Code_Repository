@@ -1,0 +1,27 @@
+int wordLadderLength(string startWord, string targetWord, vector<string>& wordList) {
+        unordered_set<string>st(wordList.begin(), wordList.end());
+        queue<pair<string,int>>q;
+        q.push({startWord,1});
+        st.erase(startWord);
+        while(!q.empty()){
+            string word = q.front().first;
+            int n = q.front().second;
+            q.pop();
+            if(word == targetWord){
+                return n;
+            }
+            for(int i=0;i<word.size();i++){
+                char orig = word[i];
+                for(char a = 'a'; a<='z';a++){
+                    word[i] = a;
+                    if(st.find(word) != st.end()) //match found
+                    {
+                        st.erase(word);
+                        q.push({word,n+1});
+                    }
+                }
+                word[i] = orig;
+            }
+        }
+        return 0;
+    }

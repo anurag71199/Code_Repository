@@ -1,0 +1,56 @@
+class Solution
+{
+    vector<int>parent,size;
+	public:
+	Solution(){
+	    parent.resize(1000);
+	    size.resize(1000,1);
+	    for(int i=0;i<1000;i++){
+	        parent[i] = i;
+	    }
+	}
+	int find(int node){
+	    if(node == parent[node]){
+	        return node;
+	    }
+	    return parent[node] = find(parent[node]);
+	}
+	void union_size(int u, int v){
+	    int pu = find(u);
+	    int pv = find(v);
+	    if(pu == pv){
+	        return; 
+	    }
+	    if(size[pu] < size[pv]){
+	        parent[pu] = pv;
+	        size[pv] += size[pu];
+	    }
+	    else{
+	        parent[pv] = pu;
+	        size[pu] += size[pv];
+	    }
+	}
+	//Function to find sum of weights of edges of the Minimum Spanning Tree.
+    int spanningTree(int V, vector<vector<int>> adj[])
+    {
+        vector<pair<int,pair<int,int>>>list_of_edges; //{wt,{u,v}}
+        for(int i=0;i<V;i++){
+            for(auto x : adj[i]){
+                list_of_edges.push_back({x[1],{i,x[0]}});
+            }
+        }
+        int sum = 0;
+        sort(list_of_edges.begin(), list_of_edges.end());
+        for(auto i : list_of_edges){
+            int wt = i.first;
+            int u = i.second.first;
+            int v = i.second.second;
+            if(find(u) == find(v)){
+                continue;
+            }
+            sum += wt;
+            union_size(u,v);
+        }
+        return sum;
+    }
+};

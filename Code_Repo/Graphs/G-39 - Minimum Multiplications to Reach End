@@ -1,0 +1,23 @@
+int minimumMultiplications(vector<int>& arr, int start, int end) {
+        vector<int>dist(100000,-1);
+        dist[start] = 0;
+        int mod = 100000;
+        queue<pair<int,int>>q;
+        q.push({0,start}); // step,start
+        while(!q.empty()){
+            int step = q.front().first;
+            int node = q.front().second;
+            q.pop();
+            for(auto i : arr){
+                int num = node*i%mod;
+                if(num == end){
+                    return step+1;
+                }
+                if(dist[num] == -1){
+                    dist[num] = 1;
+                    q.push({step+1,num});
+                }
+            }
+        }
+        return -1;
+    }

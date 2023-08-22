@@ -1,0 +1,26 @@
+class Solution
+{
+    public:
+    int kthLargest(Node *root, int K)
+    {
+        //Your code here
+        vector<int>inorder;
+        Node* cur = root;
+        stack<Node*>st;
+        while(true){
+            if(cur!=NULL){
+                st.push(cur);
+                cur=cur->left;
+            }
+            else{
+                if(st.empty())
+                    break;
+                cur = st.top();
+                st.pop();
+                inorder.push_back(cur->data);
+                cur = cur->right;
+            }
+        }
+        return inorder[inorder.size()-K];
+    }
+};

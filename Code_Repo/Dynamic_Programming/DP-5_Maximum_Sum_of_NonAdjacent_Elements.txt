@@ -1,0 +1,52 @@
+#include <bits/stdc++.h> 
+int memoize(int i, int n, vector<int>&dp, vector<int>&nums){
+    if(i==n-1){
+        return nums[i];
+    }
+    if(i>=n)
+        return 0;
+    if(dp[i] != -1)
+        return dp[i];
+    //take
+    int take = memoize(i+2,n,dp,nums) + nums[i];
+    //not take
+    int not_take = memoize(i+1,n,dp,nums);
+    return dp[i] = max(take,not_take);
+}
+
+int tabulate(vector<int>&nums){
+    vector<int>dp(nums.size());
+    dp[0] = nums[0];
+    for(int i=1;i<nums.size();i++){
+        //take
+        int take = INT_MIN;
+        if(i-2>=0)
+            take = dp[i-2] + nums[i];
+        else
+            take = nums[i];
+        //not take
+        int not_take = dp[i-1];
+        dp[i] = max(take,not_take);
+    }
+    return dp[nums.size()-1];
+}
+
+int so(vector<int>&nums){
+    if(nums.size() == 1)
+        return nums[0];
+    int a = nums[0];
+    int b = nums[1]>a?nums[1]:a;
+    int c;
+    for(int i=2;i<nums.size();i++){
+        c = max(nums[i] + a,b);
+        a = b;
+        b = c;
+    }
+    return b;
+}
+int maximumNonAdjacentSum(vector<int> &nums){
+    // vector<int>dp(nums.size(),-1);
+    // return memoize(0,nums.size(),dp,nums);
+    // return tabulate(nums);
+    return so(nums);
+}

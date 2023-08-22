@@ -1,0 +1,71 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class BSTIterator{
+    stack<TreeNode*>st;
+    bool rev;
+    public:
+    //status 1 = before iterator
+    //status 0 = next iterator
+    BSTIterator(TreeNode* root, bool status){
+        rev = status;
+        stack_push(root);
+    }
+    int next(){
+        TreeNode* cur = st.top();
+        st.pop();
+        if(rev==true)
+            stack_push(cur->left);
+        else
+            stack_push(cur->right);
+        return cur->val;
+    }
+    // bool hasnext(){
+    //     if(!st.empty())
+    //         return true;
+    //     return false;
+    // }
+    void stack_push(TreeNode* root){
+        if(rev==true){
+            while(root!=NULL){
+                st.push(root);
+                root=root->right;
+            }
+        }
+        else{
+            while(root!=NULL){
+                st.push(root);
+                root=root->left;
+            }
+        }
+    }
+};
+class Solution {
+public:
+    bool findTarget(TreeNode* root, int k) {
+        if(root==NULL)
+            return false;
+        BSTIterator left(root,false);
+        BSTIterator right(root,true);
+        int a = left.next();
+        int b = right.next();
+        while(a < b){
+            int sum = a+b;
+            if(sum == k)
+                return true;
+            if(sum < k)
+                a = left.next();
+            else
+                b = right.next();
+        }
+        return false;
+    }
+};

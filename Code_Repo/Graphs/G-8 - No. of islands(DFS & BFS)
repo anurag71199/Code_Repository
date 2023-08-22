@@ -1,0 +1,63 @@
+void dfs(vector<vector<char>>& grid,int i, int j, int n, int m, vector<vector<int>>&visited){
+        if(i<0 || j<0 || i==n || j==m || grid[i][j] == '0' || visited[i][j]==1){
+            return;
+        }
+        visited[i][j] = 1;
+        
+        //N
+        dfs(grid,i-1,j,n,m,visited);
+        //NE
+        dfs(grid,i-1,j+1,n,m,visited);
+        //E
+        dfs(grid,i,j+1,n,m,visited);
+        //SE
+        dfs(grid,i+1,j+1,n,m,visited);
+        //S
+        dfs(grid,i+1,j,n,m,visited);
+        //SW
+        dfs(grid,i+1,j-1,n,m,visited);
+        //W
+        dfs(grid,i,j-1,n,m,visited);
+        //NW
+        dfs(grid,i-1,j-1,n,m,visited);
+    }
+    void bfs(vector<vector<char>>& grid,int i, int j, int n, int m, vector<vector<int>>&visited){
+        queue<pair<int,int>>q;
+        q.push({i,j});
+        visited[i][j] = 1;
+        int dcol[] = {0,+1,+1,+1,0,-1,-1,-1}; //N,NE,E,SE,S,SW,W,NW
+        int drow[] = {-1,-1,0,+1,+1,+1,0,-1};
+        while(!q.empty()){
+            int it = q.front().first;
+            int jt = q.front().second;
+            q.pop();
+            for(int x=0;x<8;x++){
+                int itx = it+drow[x];
+                int jtx = jt+dcol[x];
+                
+                if(itx<0 || jtx<0 || itx==n || jtx==m || grid[itx][jtx] == '0' || visited[itx][jtx]==1){
+                    continue;
+                }    
+                else{
+                    visited[itx][jtx] = 1;
+                    q.push({itx,jtx});
+                }
+            }
+        }
+    }
+    int numIslands(vector<vector<char>>& grid) {
+        // Code here
+        int n=grid.size();
+        int m = grid[0].size();
+        vector<vector<int>>visited(n,vector<int>(m,0));
+        int count=0;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j] == '1' && visited[i][j] != 1){
+                    bfs(grid,i,j,n,m,visited);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }

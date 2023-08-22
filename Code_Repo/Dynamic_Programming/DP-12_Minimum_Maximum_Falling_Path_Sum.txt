@@ -1,0 +1,82 @@
+class Solution {
+public:
+    //TLE in memoization
+    int memoize(int i, int j, int n, int m, vector<vector<int>>&dp,vector<vector<int>>&grid){
+        if(i<0 || j<0 || i==n || j==m){
+            return INT_MAX;
+        }
+        if(i==n-1){
+            return grid[i][j];
+        }
+        if(dp[i][j] != -1){
+            return dp[i][j];
+        }
+        int diag_left = memoize(i+1,j-1,n,m,dp,grid);
+        int down = memoize(i+1,j,n,m,dp,grid);
+        int diag_right = memoize(i+1,j+1,n,m,dp,grid);
+        return dp[i][j] = min(diag_left,min(down,diag_right)) + grid[i][j];
+    }
+
+    int tabulation(int n, int m, vector<vector<int>>&grid){
+        //start from bottom row and create the dp to the top
+        //then select min value from the first row
+        for(int i=n-2;i>=0;i--){
+            int left = INT_MAX, down = INT_MAX, right = INT_MAX;
+            for(int j=m-1;j>=0;j--){
+                if(j-1>=0)
+                    left = grid[i+1][j-1];
+                down = grid[i+1][j];
+                if(j+1<m)
+                    right = grid[i+1][j+1];
+                grid[i][j] += min(left,min(down,right));
+            }
+        }
+        int min_ans = INT_MAX;
+        for(int i=0;i<m;i++){
+            min_ans = min(min_ans,grid[0][i]);
+        }
+        return min_ans;
+    }
+
+    int so(int n, int m, vector<vector<int>>&grid){
+        //bottom row vector will act as my dp
+        //we will use a temp vector to create the dp
+        vector<int>dp = grid[n-1];
+        for(int i=n-2;i>=0;i--){
+            int left = INT_MAX, down = INT_MAX, right = INT_MAX;
+            vector<int>temp(m,0);
+            for(int j=m-1;j>=0;j--){
+                if(j-1>=0)
+                    left = dp[j-1];
+                down = dp[j];
+                if(j+1<m)
+                    right = dp[j+1];
+                temp[j] = grid[i][j] + min(left,min(down,right));
+            }
+            dp = temp;
+        }
+        int min_ans = INT_MAX;
+        for(int i=0;i<m;i++){
+            min_ans = min(min_ans,dp[i]);
+        }
+        return min_ans;
+    }
+
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        int m = matrix[0].size();
+        //memoization
+        // vector<vector<int>>dp(n,vector<int>(m,-1));
+        // int min_ans = INT_MAX;
+        // for(int i=0;i<m;i++){
+        //     min_ans = min(min_ans,memoize(0,i,n,m,dp,matrix));
+        // }
+        // return min_ans;
+
+        //tabulation
+        // return tabulation(n,m,matrix);
+
+        //space optimization
+        return so(n,m,matrix);
+    }
+};

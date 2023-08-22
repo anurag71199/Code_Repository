@@ -1,0 +1,73 @@
+#include <bits/stdc++.h> 
+bool memoize(int i, int n, int sum, int target, vector<int>&arr, vector<vector<int>>&dp){
+    if(sum==target){
+        return true;
+    }
+    if(i==n){
+        return false;
+    }
+    if(dp[i][sum] != -1)
+        return dp[i][sum];
+    int not_take = memoize(i+1,n,sum,target,arr,dp);
+    if(not_take)
+        return true;
+    int take = false;
+    if(arr[i]+sum <= target){
+        take = memoize(i+1,n,sum+arr[i],target,arr,dp);
+        if(take)
+            return true;
+    }
+    return dp[i][sum] = false;
+}
+
+bool tabulate(int n, int target, vector<int>&arr){
+    vector<vector<bool>>dp(n,vector<bool>(target+1,false));
+    //base cases
+    for(int i=0;i<n;i++)
+        dp[i][0] = true;
+    dp[0][arr[0]] = true;
+    for(int i=1;i<n;i++){
+        for(int j=1;j<=target;j++){
+            bool not_take = dp[i-1][j];
+            bool take = false;
+            if(arr[i] <= j){
+                take = dp[i-1][j-arr[i]];
+            }
+            dp[i][j] = not_take | take;
+        }
+    }
+    return dp[n-1][target];
+}
+
+bool so(int n, int target, vector<int>&arr){
+    vector<bool>dp(target+1,false);
+    dp[0] = true;
+    dp[arr[0]] = true;
+    for(int i = 1; i < n; i++){
+        vector<bool>temp(target+1,false);
+        temp[0] = true;
+        for(int j = 1; j <= target; j++){
+            bool not_take = dp[j];
+            bool take = false;
+            if(arr[i] <= j){
+                take = dp[j-arr[i]];
+            }
+            temp[j] = take | not_take;
+        }
+        dp = temp;
+    }
+    return dp[target];
+}
+
+bool subsetSumToK(int n, int k, vector<int> &arr) {
+    //memoization
+    // vector<vector<int>>dp(n+1,vector<int>(k+1,-1));
+    // return memoize(0,n,0,k,arr,dp);    
+    
+    //tabulation
+    // return tabulate(n,k,arr);
+
+    //space optimization
+    return so(n,k,arr);
+
+}

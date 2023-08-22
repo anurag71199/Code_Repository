@@ -1,0 +1,61 @@
+class Solution {
+public:
+    int memoize(int i, int j, string &s, string &t, vector<vector<int>>&dp){
+        if(j<0)
+            return 1; //target string is completely matched
+        if(i<0)
+            return 0; //string finished before target was completely matched
+        if(dp[i][j] != -1)
+            return dp[i][j];
+        //match 
+        if(s[i] == t[j])
+            return dp[i][j] = memoize(i-1,j-1,s,t,dp) + memoize(i-1,j,s,t,dp);
+        else
+            return dp[i][j] = memoize(i-1,j,s,t,dp);
+    }
+
+    int tabulate(string &s, string &t){
+        vector<vector<double>>dp(s.size()+1,vector<double>(t.size()+1,0));
+        for(int i=0;i<=s.size();i++)
+            dp[i][0] = 1;
+        for(int i=1;i<=s.size();i++){
+            for(int j=1;j<=t.size();j++){
+                //match
+                if(s[i-1] == t[j-1])
+                    dp[i][j] = dp[i-1][j-1] + dp[i-1][j];
+                else
+                    dp[i][j] = dp[i-1][j];
+            }
+        }
+        return (int)dp[s.size()][t.size()];
+    }
+
+    int so(string &s, string &t){
+        vector<double>dp(t.size()+1,0);
+        dp[0] = 1;
+        for(int i=1;i<=s.size();i++){
+            vector<double>temp(t.size()+1,0);
+            temp[0] = 1;
+            for(int j=1;j<=t.size();j++){
+                //match
+                if(s[i-1] == t[j-1])
+                    temp[j] = dp[j-1] + dp[j];
+                else
+                    temp[j] = dp[j];
+            }
+            dp = temp;
+        }
+        return (int)dp[t.size()];
+    }
+    int numDistinct(string s, string t) {
+        //memoization
+        // vector<vector<int>>dp(s.size(),vector<int>(t.size(),-1));
+        // return memoize(s.size()-1,t.size()-1,s,t,dp);
+
+        //tabulation
+        // return tabulate(s,t);
+
+        //space optimization
+        return so(s,t);
+    }
+};

@@ -1,0 +1,78 @@
+class Solution {
+public:
+    int memoize(int i,int buy,int n,vector<int>&prices, vector<vector<int>>&dp){
+        if(i==n)
+            return 0;
+        if(dp[i][buy] != -1)
+            return dp[i][buy];
+        int take, not_take;
+        //buy
+        if(buy == 1){
+            take = memoize(i+1,0,n,prices,dp) - prices[i];
+            not_take = memoize(i+1,1,n,prices,dp);
+        }
+        //sell
+        else{
+            take = memoize(i+1,1,n,prices,dp) + prices[i];
+            not_take = memoize(i+1,0,n,prices,dp);
+        }
+        return dp[i][buy] = max(take,not_take);
+    }
+
+    int tabulate(vector<int>prices){
+        vector<vector<int>>dp(prices.size()+1,vector<int>(2,0));
+        int n = prices.size();       
+        dp[n][0] = dp[n][1] = 0;
+        for(int i=prices.size()-1;i>=0;i--){
+            for(int buy=0;buy<2;buy++){
+                int take, not_take;
+                if(buy == 1){
+                    take = dp[i+1][0] - prices[i];
+                    not_take = dp[i+1][1];
+                }
+                //sell
+                else{
+                    take = dp[i+1][1] + prices[i];
+                    not_take = dp[i+1][0];
+                }       
+                dp[i][buy] = max(take,not_take);
+            }
+        }
+        return dp[0][1];
+    }
+
+    int so(vector<int>prices){
+        vector<int>dp(2,0);
+        int n = prices.size();       
+        dp[0] = dp[1] = 0;
+        for(int i=prices.size()-1;i>=0;i--){
+            vector<int>temp(2,0);
+            for(int buy=0;buy<2;buy++){
+                int take, not_take;
+                if(buy == 1){
+                    take = dp[0] - prices[i];
+                    not_take = dp[1];
+                }
+                //sell
+                else{
+                    take = dp[1] + prices[i];
+                    not_take = dp[0];
+                }       
+                temp[buy] = max(take,not_take);
+            }
+            dp = temp;
+        }
+        return dp[1];
+    }
+    int maxProfit(vector<int>& prices) {
+        //memoization
+        // vector<vector<int>>dp(prices.size(),vector<int>(2,-1));
+        // return memoize(0,1,prices.size(),prices,dp);
+
+        //tabulation
+        // return tabulate(prices);
+
+        //space optimization
+        return so(prices);
+    }
+};

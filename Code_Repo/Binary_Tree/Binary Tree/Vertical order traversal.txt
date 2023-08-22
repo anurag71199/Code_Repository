@@ -1,0 +1,59 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+struct ds{
+    TreeNode* node;
+    int vert;
+    int level;
+    ds(TreeNode* n, int v, int l){
+        node = n;
+        vert = v;
+        level = l;
+    }
+};
+class Solution {
+public:
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        vector<vector<int>>ans;
+        if(root==NULL){
+            return ans;
+        }
+        queue<ds>q;
+        map<int,map<int,vector<int>>>mp; //{vert,{lvl,list}}
+        ds d(root,0,0);
+        q.push(d);
+        while(!q.empty()){
+            TreeNode *n = q.front().node;
+            int v = q.front().vert;
+            int l = q.front().level;
+            q.pop();
+            mp[v][l].push_back(n->val);
+
+            if(n->left!=NULL){
+                ds d(n->left,v-1,l+1);
+                q.push(d);
+            }
+            if(n->right!=NULL){
+                ds d(n->right,v+1,l+1);
+                q.push(d);
+            }
+        }
+        for(auto i : mp){
+            vector<int>temp;
+            for(auto j : i.second){
+                sort(j.second.begin(),j.second.end());
+                temp.insert(temp.end(),j.second.begin(),j.second.end());
+            }
+            ans.push_back(temp);
+        }
+        return ans;
+    }
+};

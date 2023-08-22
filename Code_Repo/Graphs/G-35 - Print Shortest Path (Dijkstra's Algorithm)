@@ -1,0 +1,42 @@
+vector<int> shortestPath(int n, int m, vector<vector<int>>& edges) {
+        vector<pair<int,int>>adjlist[n+1];
+        for(int i=0;i<m;i++){
+            int u = edges[i][0];
+            int v = edges[i][1];
+            int wt = edges[i][2];
+            adjlist[u].push_back({wt,v});
+            adjlist[v].push_back({wt,u});
+        }
+        vector<int>dist(n+1,1e6);
+        int parent[n+1];
+        for(int i=0;i<=n;i++){
+            parent[i] = i;
+        }
+        dist[1] = 0;
+        priority_queue<pair<int,int>,vector<pair<int,int>>, greater<pair<int,int>>>q;
+        q.push({0,1});
+        while(!q.empty()){
+            int node = q.top().second;
+            int d = q.top().first;
+            q.pop();
+            for(auto i : adjlist[node]){
+                if(dist[i.second] > dist[node] + i.first){
+                    parent[i.second] = node;
+                    dist[i.second] = dist[node] + i.first;
+                    q.push({dist[i.second],i.second});
+                }
+            }
+        }
+        vector<int>ans;
+        int i = n;
+        while(parent[i] != i){
+            ans.push_back(i);
+            i = parent[i];
+        }
+        if(ans.size() == 0){
+            return {-1};
+        }
+        ans.push_back(i);
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }

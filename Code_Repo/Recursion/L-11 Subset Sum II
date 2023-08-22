@@ -1,0 +1,22 @@
+void f(int i, int n, vector<int>&ds, vector<int>&arr, vector<vector<int>>&ans){
+    ans.push_back(ds);
+    if(i == n){
+        return;
+    }
+    for(int x=i;x<n;x++){
+        if(x>i && arr[x]==arr[x-1]){
+            continue;
+        }
+        ds.push_back(arr[x]);
+        f(x+1,n,ds,arr,ans);
+        ds.pop_back();
+    }
+}
+vector<vector<int>> uniqueSubsets(int n, vector<int> &arr)
+{
+    sort(arr.begin(),arr.end());
+    vector<int>ds;
+    vector<vector<int>>ans;
+    f(0,n,ds,arr,ans);
+    return ans;
+}

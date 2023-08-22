@@ -1,0 +1,83 @@
+#include <bits/stdc++.h> 
+/************************************************************
+
+    Following is the Binary Tree node structure:
+    
+    template <typename T>
+    class TreeNode {
+        public :
+        T data;
+        TreeNode<T> *left;
+        TreeNode<T> *right;
+
+        TreeNode(T data) {
+            this -> data = data;
+            left = NULL;
+            right = NULL;
+        }
+
+        ~TreeNode() {
+            if(left)
+                delete left;
+            if(right)
+                delete right;
+        }
+    };
+
+************************************************************/
+bool isLeaf(TreeNode<int>* node){
+    if(node==NULL || (node->left==NULL && node->right==NULL)){
+        return true;
+    }
+    return false;
+}
+void left_boundary(TreeNode<int>* root, vector<int>&ans){
+    while(root!=NULL){
+        // cout<<"pushing left "<<cur->data<<endl;
+        if(!isLeaf(root))
+            ans.push_back(root->data);
+        if(root->left!=NULL)
+            root = root->left;
+        else
+            root = root->right;
+    }
+}
+void right_boundary(TreeNode<int>* root, vector<int>&ans){
+    vector<int>rev;
+    while(root!=NULL){
+        // cout<<"pushing right "<<cur->data<<endl;
+        if(!isLeaf(root))
+            rev.push_back(root->data);
+        if(root->right!=NULL)
+            root = root->right;
+        else
+            root = root->left;
+    }
+    reverse(rev.begin(),rev.end());
+    for(auto i : rev){
+        ans.push_back(i);
+    }
+}
+void inorder(TreeNode<int>* root, vector<int>&ans){
+    if(root==NULL){
+        return;
+    }
+    inorder(root->left,ans);
+    if(isLeaf(root))
+        ans.push_back(root->data);
+    inorder(root->right,ans);
+}
+vector<int> traverseBoundary(TreeNode<int>* root){
+    // Write your code here.
+    if(root == NULL){
+      return {};
+    }
+    vector<int>ans;
+    ans.push_back(root->data);
+    if(isLeaf(root))
+        return ans;
+    left_boundary(root->left,ans);//left boundary traversal
+    inorder(root,ans);
+    right_boundary(root->right,ans);
+    return ans;
+}

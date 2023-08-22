@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int new_tab(vector<int>&nums){
+        int n = nums.size();
+        vector<int>dp(n,1);
+        vector<int>track(n,0);
+        int maxi = 1, last=0;
+        for(int i=0;i<n;i++){
+            track[i] = i;
+            for(int prev=0;prev<i;prev++){
+                if(nums[i] > nums[prev] && dp[i] < (dp[prev]+1)){
+                    dp[i] = dp[prev]+1;
+                    track[i] = prev;
+                }
+            }
+            if(maxi < dp[i]){
+                maxi = dp[i];
+                last = i;
+            }
+        }
+        while(track[last] != last){
+            cout<<nums[last]<<" ";
+            last = track[last];
+        }
+        cout<<nums[last]<<" ";
+    
+        return maxi;
+    }
+    int lengthOfLIS(vector<int>& nums) {
+        //new tabulation method
+        return new_tab(nums);
+    }
+};

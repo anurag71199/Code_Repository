@@ -1,0 +1,33 @@
+bool check(int V, vector<int>adj[], int start, vector<int>&visited){
+        queue<int>q;
+	    q.push(start);
+	    visited[start] = 0; //can have 2 colors, 0 or 1. Starting with color 0
+	    while(!q.empty()){
+	        int node = q.front();
+	        q.pop();
+	        for(auto i : adj[node]){
+	            if(visited[i] == -1){
+	                visited[i] = !visited[node];
+	                q.push(i);
+	            }
+	            else{
+	                if(visited[i] == visited[node]){
+	                    return false;
+	                }
+	            }
+	        }
+	    }
+	    return true;
+    }
+	bool isBipartite(int V, vector<int>adj[]){
+	    // Code here
+	    vector<int>visited(V,-1);
+	    for(int i=0;i<V;i++){
+	        if(visited[i] == -1){
+	            if(check(V,adj,i,visited) == false){
+	                return false;
+	            }
+	        }
+	    }
+	    return true;
+	}

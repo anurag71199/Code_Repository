@@ -1,0 +1,23 @@
+int spanningTree(int V, vector<vector<int>> adj[])
+    {
+        vector<int>visited(V,0);
+        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>>q;
+        q.push({0,0}); // {weight,node} If you wanted the mst edges, you must carry the parent as well
+        int sum=0;
+        while(!q.empty()){
+            int d = q.top().first;
+            int node = q.top().second;
+            q.pop();
+            if(visited[node] == 1) continue;
+            visited[node] = 1;
+            sum+=d;
+            for(auto i : adj[node]){
+                int n = i[0];
+                int wt = i[1];
+                if(visited[n] == 0){
+                    q.push({wt,n});
+                }
+            }
+        }
+        return sum;
+    }

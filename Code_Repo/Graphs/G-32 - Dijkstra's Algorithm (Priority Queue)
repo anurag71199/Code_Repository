@@ -1,0 +1,31 @@
+vector <int> dijkstra(int V, vector<vector<int>> adj[], int S)
+    {
+        vector<pair<int,int>>adjlist[V];
+        vector<int>dist(V,1e5);
+        for(int i=0;i<V;i++){
+            for(int j=0;j<adj[i].size();j++){
+    
+            int u = i;
+            int v = adj[i][j][0];
+            int wt = adj[i][j][1];
+            adjlist[i].push_back({wt,v});
+            adjlist[v].push_back({wt,i});
+        
+            }
+        }
+        dist[S] = 0;
+        priority_queue<pair<int,int>,vector<pair<int,int>>, greater<pair<int,int>>>q;
+        q.push({0,S});
+        while(!q.empty()){
+            int node = q.top().second;
+            int d = q.top().first;
+            q.pop();
+            for(auto i : adjlist[node]){
+                if(dist[i.second] > dist[node] + i.first){
+                    dist[i.second] = dist[node] + i.first;
+                    q.push({dist[i.second],i.second});
+                }
+            }
+        }
+        return dist;
+    }

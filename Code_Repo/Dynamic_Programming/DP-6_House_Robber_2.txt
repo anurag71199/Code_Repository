@@ -1,0 +1,99 @@
+class Solution {
+public:
+    int memoize(int i, int n, vector<int>&nums, vector<int>&dp){
+        if(i>=n){
+            return 0;
+        }
+        if(dp[i] != -1)
+            return dp[i];
+        //take
+        int take = memoize(i+2,n,nums,dp) + nums[i];
+        //not take
+        int not_take = memoize(i+1,n,nums,dp);
+        return dp[i] = max(take,not_take);
+    }
+
+    int tabulate(vector<int>&nums){
+        int n = nums.size();
+        vector<int>dp(n-1);
+        //leaving out last 
+        dp[0] = nums[0];
+        for(int i=1;i<n-1;i++){
+            //take
+            int take = nums[i];
+            if(i-2>=0)
+                take = dp[i-2] + nums[i];
+            int not_take = dp[i-1];
+            dp[i] = max(take,not_take);
+        }
+        int first = dp.back();
+        // //leaving out first
+        dp.clear();
+        dp[0] = nums[1];
+        for(int i=1;i<n-1;i++){
+            //take
+            int take = nums[i+1];
+            if(i-2>=0)
+                take = dp[i-2] + nums[i+1];
+            int not_take = dp[i-1];
+            dp[i] = max(take,not_take);
+        }
+        int last = dp[n-2];
+        return max(first,last);
+    }
+
+    int so(vector<int>&nums){
+        //leaving out last house
+        if(nums.size() == 2)
+            return max(nums[0],nums[1]);
+        int a = nums[0];
+        int b = nums[0]>nums[1]?nums[0]:nums[1];
+        int c;
+        for(int i=2;i<nums.size()-1;i++){
+            //take 
+            int take = a + nums[i];
+            //not take
+            int not_take = b;
+            c = max(take,not_take);
+            a=b;
+            b=c;
+        }
+        int first = b;
+        //leaving out first house
+        a = nums[1];
+        b = nums[1]>nums[2]?nums[1]:nums[2];
+        for(int i=3;i<nums.size();i++){
+            //take 
+            int take = a + nums[i];
+            //not take
+            int not_take = b;
+            c = max(take,not_take);
+            a=b;
+            b=c;
+        }
+        int last = b;
+        return max(first,last);
+    }
+    int rob(vector<int>& nums) {
+        if(nums.size() == 1)
+            return nums[0];
+        
+        //********memoize**********
+        // vector<int>dp(nums.size(),-1);
+        // int n = nums.size();
+        // // leaving out the last house
+        // int first = memoize(0,n-1,nums,dp);
+        // //leaving out the first house
+        // vector<int>dp2(nums.size(),-1);
+        // int last = memoize(1,n,nums,dp2);
+        // return max(first,last);
+
+        //*********tabulate********
+        // return tabulate(nums);
+
+        //*********space optimization*****
+        return so(nums);
+
+
+    }
+};

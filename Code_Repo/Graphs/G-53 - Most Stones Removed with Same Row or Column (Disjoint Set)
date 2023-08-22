@@ -1,0 +1,56 @@
+class Solution {
+  public:
+	vector<int>parent,size;
+	Solution(){
+	    parent.resize(1000000);
+	    size.resize(1000000,1);
+	    for(int i=0;i<1000000;i++){
+	        parent[i] = i;
+	    }
+	}
+	int find(int node){
+	    if(node == parent[node]){
+	        return node;
+	    }
+	    return parent[node] = find(parent[node]);
+	}
+	void union_size(int u, int v){
+	    int pu = find(u);
+	    int pv = find(v);
+	    if(pu == pv){
+	        return; 
+	    }
+	    if(size[pu] < size[pv]){
+	        parent[pu] = pv;
+	        size[pv] += size[pu];
+	    }
+	    else{
+	        parent[pv] = pu;
+	        size[pu] += size[pv];
+	    }
+	}
+    int maxRemove(vector<vector<int>>& stones, int n) {
+        //grid size not given so find that out first
+        int myrows=0,mycols=0;
+        for(int i=0;i<stones.size();i++){
+            myrows = max(myrows,stones[i][0]);
+            mycols = max(mycols,stones[i][1]);
+        }
+        unordered_map<int,int>mymap; //map for storing unique parents
+        //now to make the sets
+        for(int i=0;i<stones.size();i++){
+            int nr = stones[i][0];
+            int nc = stones[i][1] + myrows + 1; // col = col + maxrows + 1
+            union_size(nr,nc);
+            mymap[nc] = 1;
+            mymap[nr] = 1;
+        }
+        int components = 0; // as all nodes wont be part of sets
+        for(auto i : mymap){
+            if(find(i.first) == i.first){
+                components++;
+            }
+        }
+        return n-components;
+    }
+};

@@ -1,0 +1,37 @@
+class Solution {
+public:
+    void nextPermutation(vector<int>& nums) {
+        int idx = -1;
+        int n = nums.size();
+        //first iterate from the end ad try to find a break point where right element is bigger than left
+        for(int i = n-1;i>0;i--){
+            if(nums[i] <= nums[i-1]){
+                continue;
+            }
+            idx = i-1;
+            break;
+        }
+        //if no such element found, that means the array is in descending order, 
+        //so we just need to reverse it 
+        if(idx == -1){
+            reverse(nums.begin(),nums.end());
+            return;
+        }
+        //replace the found element with the min element on the right greater than the element
+        int mini = nums[idx+1];
+        int rep_idx = idx+1;
+        for(int i=idx+2;i<n;i++){
+            if(mini >= nums[i] && nums[i]>nums[idx]){
+                mini = nums[i];
+                rep_idx = i;
+            }
+        }
+        //swap the min element and the found element
+        swap(nums[idx],nums[rep_idx]);
+        //now after swap. we need to arrange the remaining elements on the right in descending order
+        //we can do that by simply reversing it
+        reverse(nums.begin() + idx+1, nums.end());
+        return;
+
+    }
+};

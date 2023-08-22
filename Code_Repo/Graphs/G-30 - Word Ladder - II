@@ -1,0 +1,38 @@
+vector<vector<string>> findSequences(string beginWord, string endWord, vector<string>& wordList) {
+        vector<vector<string>>ans;
+        unordered_set<string>st(wordList.begin(),wordList.end());
+        queue<vector<string>>q;
+        q.push({beginWord});
+        vector<string>usedWords;
+        usedWords.push_back(beginWord);
+        int level = 0;
+        while(!q.empty()){
+            vector<string>v = q.front();
+            string current = v.back();
+            q.pop();
+            if(v.size() > level){
+                level++;
+                for(auto i : usedWords){
+                    st.erase(i);
+                }
+                usedWords.clear();
+            }
+            if(current == endWord){
+                ans.push_back(v);
+            }
+            for(int i=0;i<current.size();i++){
+                char orig = current[i];
+                for(char ch='a';ch<='z';ch++){
+                    current[i] = ch;
+                    if(st.find(current) != st.end()){
+                        v.push_back(current);
+                        usedWords.push_back(current);
+                        q.push(v);
+                        v.pop_back();
+                    }
+                }
+                current[i] = orig;
+            }
+        }
+        return ans;
+    }

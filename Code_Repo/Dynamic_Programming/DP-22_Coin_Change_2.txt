@@ -1,0 +1,72 @@
+class Solution {
+public:
+    int memoize(int i, int n, int target, vector<int>&arr, vector<vector<int>>&dp){
+        if(i==n){
+            if(target == 0)
+                return 1;
+            return 0;
+        }
+        if(dp[i][target] != -1)
+            return dp[i][target];
+        int not_take = memoize(i+1,n,target,arr,dp);
+        int take = 0;
+        if(arr[i] <= target){
+            take = memoize(i,n,target - arr[i], arr,dp);
+        }
+        return dp[i][target] = take + not_take;
+    }
+
+    int tabulate(int n, int target, vector<int>&arr){
+        vector<vector<int>>dp(n,vector<int>(target+1,0));
+        for(int i=0;i<=target;i++){
+            if(i%arr[0]==0)
+                dp[0][i] = 1;
+        }
+        for(int i=1;i<n;i++){
+            for(int j = 0;j<=target;j++){
+                int not_take = dp[i-1][j];
+                int take = 0;
+                if(arr[i] <= j){
+                    take = dp[i][j-arr[i]];
+                }
+                dp[i][j] = take + not_take;
+            }
+        }
+        return dp[n-1][target];
+    }
+
+    int so(int n, int target, vector<int>&arr){
+        vector<int>dp(target+1,0);
+        for(int i=0;i<=target;i++){
+            if(i%arr[0]==0)
+                dp[i] = 1;
+        }
+        for(int i=1;i<n;i++){
+            vector<int>temp(target+1,0);
+            for(int j = 0;j<=target;j++){
+                int not_take = dp[j];
+                int take = 0;
+                if(arr[i] <= j){
+                    take = temp[j-arr[i]];
+                }
+                temp[j] = take + not_take;
+            }
+            dp = temp;
+        }
+        return dp[target];
+    }
+
+    int change(int amount, vector<int>& coins) {
+        int n = coins.size();
+
+        //memoization
+        // vector<vector<int>>dp(n,vector<int>(amount+1,-1));
+        // return memoize(0,n,amount,coins,dp);
+
+        //tabulation
+        // return tabulate(n,amount,coins);
+
+        //space optimization
+        return so(n,amount,coins);
+    }
+};
